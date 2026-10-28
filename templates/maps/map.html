@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Interactive Task Map - Track My Ride{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-lg-4 py-3">
+  <!-- Map Header & Filter Controls -->
+  <div class="card card-tmr border-0 shadow-sm p-3 mb-3">
+    <div class="row g-2 align-items-center">
+      <!-- Title & Live Counter -->
+      <div class="col-xl-3 col-lg-4 col-12">
+        <div class="d-flex align-items-center gap-2">
+          <div class="brand-icon" style="width: 32px; height: 32px; font-size: 0.9rem;">
+            <i class="fas fa-map-marked-alt"></i>
+          </div>
+          <div>
+            <h5 class="fw-bold text-dark mb-0">Interactive Task Map</h5>
+            <div class="text-muted small" style="font-size: 0.75rem;">
+              Showing <span id="map-tasks-count" class="fw-bold text-primary">{{ total_tasks }}</span> location pins
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filters Row -->
+      <div class="col-xl-9 col-lg-8 col-12">
+        <div class="row g-2 align-items-center justify-content-lg-end">
+          <!-- Category Filter -->
+          <div class="col-md-3 col-6">
+            <select id="map-filter-category" class="form-select form-select-sm">
+              <option value="">All Categories</option>
+              {% for cat in categories %}
+              <option value="{{ cat.name }}">{{ cat.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <!-- Priority Filter -->
+          <div class="col-md-2 col-6">
+            <select id="map-filter-priority" class="form-select form-select-sm">
+              <option value="">All Priorities</option>
+              <option value="urgent">Urgent (Red)</option>
+              <option value="high">High (Orange)</option>
+              <option value="medium">Medium (Blue)</option>
+              <option value="low">Low (Green)</option>
+            </select>
+          </div>
+
+          <!-- Status Filter -->
+          <div class="col-md-2 col-6">
+            <select id="map-filter-status" class="form-select form-select-sm">
+              <option value="">All Statuses</option>
+              <option value="pending">Pending Only</option>
+              <option value="completed">Completed Only</option>
+            </select>
+          </div>
+
+          <!-- Radius Circle Toggle Switch -->
+          <div class="col-md-3 col-6 d-flex align-items-center">
+            <div class="form-check form-switch mb-0">
+              <input class="form-check-input" type="checkbox" id="map-toggle-radius" checked>
+              <label class="form-check-label small fw-semibold" for="map-toggle-radius">
+                Geofence Circles
+              </label>
+            </div>
+          </div>
+
+          <!-- Locate Button -->
+          <div class="col-auto">
+            <button id="btn-map-locate" class="btn btn-sm btn-outline-primary" title="Center to My GPS Location">
+              <i class="fas fa-crosshairs me-1"></i> Locate Me
+            </button>
+          </div>
+
+          <!-- Add Task Button -->
+          <div class="col-auto">
+            <a href="{% url 'tasks:task_create' %}" class="btn btn-sm btn-primary shadow-sm">
+              <i class="fas fa-plus me-1"></i> Add Task
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Full-Width Interactive Map Canvas -->
+  <div class="position-relative">
+    <div id="tasks-map-canvas" class="map-canvas-container shadow-sm" style="height: calc(100vh - 220px); min-height: 500px;"></div>
+
+    <!-- Floating Map Legend Overlay -->
+    <div class="position-absolute bottom-0 start-0 m-3 p-3 bg-white bg-opacity-95 rounded-3 shadow border d-none d-md-block" style="z-index: 10; max-width: 250px;">
+      <h6 class="fw-bold text-dark small mb-2"><i class="fas fa-info-circle text-primary me-1"></i> Marker Legend</h6>
+      <div class="d-flex flex-column gap-1 small text-muted" style="font-size: 0.75rem;">
+        <div class="d-flex align-items-center gap-2">
+          <span style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: #ef4444;"></span>
+          <span>Urgent Priority</span>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <span style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: #f97316;"></span>
+          <span>High Priority</span>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <span style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: #2563eb;"></span>
+          <span>Medium Priority</span>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <span style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: #10b981;"></span>
+          <span>Low Priority</span>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <span style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: #94a3b8;"></span>
+          <span>Completed Task</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  window.tasksMapData = {{ tasks_json|safe }};
+</script>
+<script src="{% static 'js/task-map.js' %}"></script>
+{% endblock %}

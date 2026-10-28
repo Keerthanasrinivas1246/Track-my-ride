@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Geofence Alerts &amp; Reminders - Track My Ride{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <!-- Header Bar -->
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+      <h2 class="fw-bold text-dark mb-1">Geofence Proximity Alerts</h2>
+      <p class="text-muted small mb-0">Review location triggers and proximity arrival history</p>
+    </div>
+    {% if reminders %}
+    <form method="post" action="{% url 'notifications:mark_all_read' %}">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-outline-secondary btn-sm">
+        <i class="fas fa-check-double me-1"></i> Mark All as Read
+      </button>
+    </form>
+    {% endif %}
+  </div>
+
+  {% if reminders %}
+  <div class="card card-tmr border-0 shadow-sm overflow-hidden mb-4">
+    <div class="list-group list-group-flush">
+      {% for reminder in reminders %}
+      <div id="reminder-item-{{ reminder.id }}" class="list-group-item p-3 p-md-4 {% if not reminder.is_read %}bg-primary-subtle bg-opacity-25{% endif %} border-bottom">
+        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-2">
+          <div class="d-flex align-items-center gap-2">
+            <span class="badge {% if not reminder.is_read %}bg-danger animate__animated animate__pulse{% else %}bg-secondary{% endif %}">
+              {% if not reminder.is_read %}NEW ALERT{% else %}READ{% endif %}
+            </span>
+            <h6 class="fw-bold text-dark mb-0">
+              <a href="{{ reminder.task.get_absolute_url }}" class="text-dark text-decoration-none">
+                {{ reminder.task.title }}
+              </a>
+            </h6>
+          </div>
+          <span class="text-muted small">
+            <i class="far fa-clock me-1"></i> {{ reminder.triggered_at|timesince }} ago
+          </span>
+        </div>
+
+        <p class="text-secondary small mb-2">
+          <i class="fas fa-location-arrow text-primary me-1"></i>
+          Triggered when you arrived within <strong>{{ reminder.distance_at_trigger|floatformat:0 }} meters</strong> of
+          <strong>{{ reminder.task.place_name }}</strong>.
+        </p>
+
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 pt-2 border-top">
+          <div class="small text-muted">
+            <i class="fas fa-map-pin text-danger me-1"></i> {{ reminder.task.address|truncatechars:60 }}
+          </div>
+          <div class="d-flex gap-2">
+            {% if not reminder.is_read %}
+            <button class="btn btn-sm btn-outline-secondary btn-mark-read" data-reminder-id="{{ reminder.id }}" style="font-size: 0.78rem;">
+              <i class="fas fa-check me-1"></i> Mark Read
+            </button>
+            {% endif %}
+            <a href="{{ reminder.task.get_absolute_url }}" class="btn btn-sm btn-primary" style="font-size: 0.78rem;">
+              <i class="fas fa-eye me-1"></i> View Task
+            </a>
+            <a href="{{ reminder.task.directions_url }}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-primary" style="font-size: 0.78rem;">
+              <i class="fas fa-directions me-1"></i> Directions
+            </a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% else %}
+  <div class="card card-tmr border-0 shadow-sm text-center py-5">
+    <div class="stat-icon bg-light text-primary mx-auto mb-3" style="width: 72px; height: 72px; font-size: 2rem;">
+      <i class="fas fa-bell-slash"></i>
+    </div>
+    <h4 class="fw-bold text-dark mb-2">No Proximity Alerts Yet</h4>
+    <p class="text-muted small mb-4 mx-auto" style="max-width: 440px;">
+      Whenever you physically commute into the geofence radius of one of your active tasks, your alert logs will be recorded right here.
+    </p>
+    <div>
+      <a href="{% url 'tasks:task_create' %}" class="btn btn-primary shadow">
+        <i class="fas fa-plus me-1"></i> Create a Geofenced Task
+      </a>
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.querySelectorAll('.btn-mark-read').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      const id = btn.dataset.reminderId;
+      try {
+        const res = await fetch(`/notifications/${id}/read/`, {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': window.getCsrfToken(),
+            'X-Requested-With': 'XMLHttpRequest'
+          }
+        });
+        const data = await res.json();
+        if (data.success) {
+          const item = document.getElementById(`reminder-item-${id}`);
+          if (item) {
+            item.classList.remove('bg-primary-subtle', 'bg-opacity-25');
+            btn.remove();
+          }
+        }
+      } catch (err) {
+        console.error('Error marking reminder as read:', err);
+      }
+    });
+  });
+</script>
+{% endblock %}

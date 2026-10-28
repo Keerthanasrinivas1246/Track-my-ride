@@ -1,0 +1,126 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>{% block title %}{{ APP_NAME }} - Smart Location-Based To-Do Manager{% endblock %}</title>
+
+  <meta name="description" content="Track My Ride: Smart location-based task manager that reminds you of errands and to-dos whenever you reach near their locations.">
+  <meta name="user-authenticated" content="{% if user.is_authenticated %}true{% else %}false{% endif %}">
+
+  <!-- Google Font: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <!-- Bootstrap 5.3 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+  <!-- AOS Animation Library -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" integrity="sha512-1cK78a1o+ht2JcaW6g8OXYwqpev9+6GqOkz9xmBN9iUUhIndKtxwILGWYOSibOKjLsEdjyjZvYDq/cZwNeak0w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <!-- Leaflet CSS (Reliable interactive fallback & complement) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+  <!-- Custom Design System -->
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+  {% block extra_css %}{% endblock %}
+</head>
+<body data-sound-alerts="{% if user.is_authenticated and user.profile.enable_sound_alerts %}true{% else %}false{% endif %}">
+
+  <!-- Navigation Bar -->
+  {% include 'includes/navbar.html' %}
+
+  <!-- Global Flash Messages -->
+  {% include 'includes/messages.html' %}
+
+  <!-- Global Google Maps Auth Diagnostic Alert (Hidden by default, shown on auth failure) -->
+  <div id="google-maps-auth-alert" class="container mt-3 d-none">
+    <div class="alert alert-warning border-0 shadow-sm d-flex align-items-start gap-3" role="alert">
+      <i class="fas fa-exclamation-triangle fa-2x text-warning mt-1"></i>
+      <div class="flex-grow-1">
+        <h6 class="alert-heading fw-bold mb-1">Google Maps API Configuration Notice</h6>
+        <p class="small mb-2 text-dark">
+          Google Maps reported an authorization or billing error (<code>gm_authFailure</code>).
+          The interactive map fallback has been activated so you can continue using the application.
+        </p>
+        <div class="small text-secondary mb-0">
+          <strong>To enable Google Maps with your API key:</strong>
+          <ol class="mb-1 ps-3">
+            <li>Ensure billing is enabled on your <a href="https://console.cloud.google.com/billing" target="_blank" class="fw-semibold">Google Cloud project</a>.</li>
+            <li>In <a href="https://console.cloud.google.com/apis/dashboard" target="_blank" class="fw-semibold">APIs &amp; Services</a>, enable: <strong>Maps JavaScript API</strong>, <strong>Places API</strong>, and <strong>Geocoding API</strong>.</li>
+            <li>If your key has HTTP referrer restrictions, add: <code>http://localhost:8000/*</code>, <code>http://127.0.0.1:8000/*</code>.</li>
+          </ol>
+        </div>
+      </div>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  </div>
+
+  <!-- Main Viewport Content -->
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Global Footer -->
+  {% include 'includes/footer.html' %}
+
+  <!-- Floating Geofence Notification Container -->
+  <div id="geofence-toast-container" class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1099;"></div>
+
+  <!-- Bootstrap 5 Bundle JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+  <!-- AOS Library JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js" integrity="sha512-A7AYk1fGKX6S2SsHywmPkrnzTZHrgiVT7GcQkLGDe2ev0aWb8zejytzS8wjo7PGEXKqJOrjQ4oORtnimIRZBtw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <!-- Chart.js (for Dashboards & Visualizations) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+
+  <!-- Leaflet JS (Interactive fallback) -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <!-- Google Maps JavaScript API Loading & Asynchronous Orchestration -->
+  {% if GOOGLE_MAPS_API_KEY %}
+  <script>
+    window.GOOGLE_MAPS_KEY_PRESENT = true;
+    window.googleMapsLoaded = false;
+    window.googleMapsAuthFailed = false;
+
+    window.onGoogleMapsInit = function() {
+      window.googleMapsLoaded = true;
+      document.dispatchEvent(new CustomEvent('google-maps-ready'));
+    };
+
+    window.gm_authFailure = function() {
+      console.warn("Google Maps API authentication failed (gm_authFailure). Check API key restrictions, billing, and enabled APIs in Google Cloud Console.");
+      window.googleMapsAuthFailed = true;
+      const alertBox = document.getElementById('google-maps-auth-alert');
+      if (alertBox) {
+        alertBox.classList.remove('d-none');
+      }
+      document.dispatchEvent(new CustomEvent('google-maps-auth-failure'));
+    };
+  </script>
+  <script src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_API_KEY }}&libraries=places,geometry&callback=onGoogleMapsInit" async defer></script>
+  {% else %}
+  <script>
+    window.GOOGLE_MAPS_KEY_PRESENT = false;
+    window.googleMapsLoaded = false;
+    window.googleMapsAuthFailed = false;
+  </script>
+  {% endif %}
+
+  <!-- Core App Scripts -->
+  <script src="{% static 'js/main.js' %}"></script>
+  <script src="{% static 'js/geofence-tracker.js' %}"></script>
+
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

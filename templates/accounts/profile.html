@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Profile - Track My Ride{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row g-4 justify-content-center">
+    <!-- Left Column: User Summary Card -->
+    <div class="col-lg-4" data-aos="fade-right">
+      <div class="card card-tmr border-0 shadow-sm p-4 text-center">
+        <div class="position-relative d-inline-block mx-auto mb-3">
+          <img src="{{ profile.avatar_url }}" alt="{{ user.username }}" class="rounded-circle shadow" style="width: 120px; height: 120px; object-fit: cover; border: 4px solid #ffffff;">
+        </div>
+        <h4 class="fw-bold text-dark mb-1">{{ profile.display_name }}</h4>
+        <p class="text-muted small mb-3">@{{ user.username }}</p>
+
+        {% if profile.bio %}
+        <p class="small text-secondary mb-4 italic">"{{ profile.bio }}"</p>
+        {% endif %}
+
+        <hr class="text-muted">
+
+        <!-- Stats Section -->
+        <div class="row g-2 text-center my-2">
+          <div class="col-4">
+            <div class="fw-bold fs-5 text-primary">{{ stats.total_tasks }}</div>
+            <div class="text-muted" style="font-size: 0.72rem;">TOTAL</div>
+          </div>
+          <div class="col-4">
+            <div class="fw-bold fs-5 text-success">{{ stats.completed_tasks }}</div>
+            <div class="text-muted" style="font-size: 0.72rem;">DONE</div>
+          </div>
+          <div class="col-4">
+            <div class="fw-bold fs-5 text-warning">{{ stats.completion_rate }}%</div>
+            <div class="text-muted" style="font-size: 0.72rem;">RATE</div>
+          </div>
+        </div>
+
+        <hr class="text-muted">
+
+        <div class="d-flex flex-column gap-2 text-start small text-muted">
+          <div><i class="fas fa-envelope text-primary me-2"></i> {{ user.email|default:"No email set" }}</div>
+          {% if profile.phone %}
+          <div><i class="fas fa-phone text-primary me-2"></i> {{ profile.phone }}</div>
+          {% endif %}
+          <div><i class="fas fa-bullseye text-primary me-2"></i> Default Radius: <strong>{{ profile.preferred_radius }}m</strong></div>
+          <div><i class="fas fa-volume-up text-primary me-2"></i> Sound Alerts: <strong>{% if profile.enable_sound_alerts %}Enabled{% else %}Disabled{% endif %}</strong></div>
+          <div><i class="fas fa-calendar-alt text-primary me-2"></i> Member since {{ user.date_joined|date:"M Y" }}</div>
+        </div>
+
+        <div class="mt-4 pt-2">
+          <a href="{% url 'accounts:password_change' %}" class="btn btn-outline-secondary btn-sm w-100">
+            <i class="fas fa-key me-1"></i> Change Password
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Profile Edit Form -->
+    <div class="col-lg-8" data-aos="fade-left">
+      <div class="card card-tmr border-0 shadow-sm p-4 p-md-5">
+        <h4 class="fw-bold text-dark mb-1">Edit Account Profile</h4>
+        <p class="text-muted small mb-4">Update your personal details, geofence radius defaults, and notification preferences</p>
+
+        <form method="post" enctype="multipart/form-data" novalidate>
+          {% csrf_token %}
+
+          <h6 class="fw-bold text-primary mb-3"><i class="fas fa-user me-2"></i> Personal Information</h6>
+
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label for="{{ user_form.first_name.id_for_label }}" class="form-label">First Name</label>
+              {{ user_form.first_name }}
+              {% if user_form.first_name.errors %}
+              <div class="text-danger small mt-1">{{ user_form.first_name.errors.0 }}</div>
+              {% endif %}
+            </div>
+            <div class="col-md-6">
+              <label for="{{ user_form.last_name.id_for_label }}" class="form-label">Last Name</label>
+              {{ user_form.last_name }}
+              {% if user_form.last_name.errors %}
+              <div class="text-danger small mt-1">{{ user_form.last_name.errors.0 }}</div>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">
+              <label for="{{ user_form.email.id_for_label }}" class="form-label">Email Address</label>
+              {{ user_form.email }}
+              {% if user_form.email.errors %}
+              <div class="text-danger small mt-1">{{ user_form.email.errors.0 }}</div>
+              {% endif %}
+            </div>
+            <div class="col-md-6">
+              <label for="{{ profile_form.phone.id_for_label }}" class="form-label">Phone Number</label>
+              {{ profile_form.phone }}
+              {% if profile_form.phone.errors %}
+              <div class="text-danger small mt-1">{{ profile_form.phone.errors.0 }}</div>
+              {% endif %}
+            </div>
+          </div>
+
+          <h6 class="fw-bold text-primary mb-3"><i class="fas fa-sliders-h me-2"></i> Preferences &amp; Geofencing</h6>
+
+          <div class="mb-3">
+            <label for="{{ profile_form.avatar.id_for_label }}" class="form-label">Profile Avatar Image</label>
+            {{ profile_form.avatar }}
+            <div class="form-text small">Upload JPG, PNG or WEBP (Max 2MB).</div>
+            {% if profile_form.avatar.errors %}
+            <div class="text-danger small mt-1">{{ profile_form.avatar.errors.0 }}</div>
+            {% endif %}
+          </div>
+
+          <div class="mb-3">
+            <label for="{{ profile_form.bio.id_for_label }}" class="form-label">Bio / Notes</label>
+            {{ profile_form.bio }}
+            {% if profile_form.bio.errors %}
+            <div class="text-danger small mt-1">{{ profile_form.bio.errors.0 }}</div>
+            {% endif %}
+          </div>
+
+          <div class="row g-3 mb-4 align-items-center">
+            <div class="col-md-6">
+              <label for="{{ profile_form.preferred_radius.id_for_label }}" class="form-label">Default Geofence Radius (meters)</label>
+              <div class="input-group">
+                {{ profile_form.preferred_radius }}
+                <span class="input-group-text bg-light">meters</span>
+              </div>
+              <div class="form-text small">Recommended: 300m - 1000m.</div>
+              {% if profile_form.preferred_radius.errors %}
+              <div class="text-danger small mt-1">{{ profile_form.preferred_radius.errors.0 }}</div>
+              {% endif %}
+            </div>
+            <div class="col-md-6">
+              <div class="form-check form-switch mt-md-4">
+                {{ profile_form.enable_sound_alerts }}
+                <label class="form-check-label fw-semibold" for="{{ profile_form.enable_sound_alerts.id_for_label }}">
+                  Enable Audio Chime on Proximity
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-end gap-2 pt-3 border-top">
+            <a href="{% url 'core:dashboard' %}" class="btn btn-outline-secondary">Cancel</a>
+            <button type="submit" class="btn btn-primary px-4 shadow">
+              <i class="fas fa-save me-1"></i> Save Changes
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

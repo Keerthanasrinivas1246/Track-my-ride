@@ -1,0 +1,235 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}About Track My Ride - Architecture &amp; Tech Stack{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <!-- Title Header -->
+  <div class="text-center mb-5" data-aos="fade-up">
+    <span class="badge bg-primary-subtle text-primary mb-2 px-3 py-1 rounded-pill">Portfolio &amp; Engineering Showcase</span>
+    <h1 class="fw-bold text-dark mb-3">About Track My Ride</h1>
+    <p class="text-muted mx-auto" style="max-width: 680px;">
+      An intelligent, location-aware productivity system engineered to eliminate forgotten errands through precision background geofencing and responsive web technologies.
+    </p>
+  </div>
+
+  <!-- The Problem & Solution -->
+  <div class="row g-4 mb-5">
+    <div class="col-md-6" data-aos="fade-right">
+      <div class="card card-tmr h-100 p-4 border-0">
+        <div class="stat-icon bg-danger-subtle text-danger mb-3">
+          <i class="fas fa-exclamation-circle"></i>
+        </div>
+        <h4 class="fw-bold text-dark mb-3">The Problem</h4>
+        <p class="text-muted">
+          Traditional to-do apps notify you based on clock time (e.g. 5:00 PM). But real life is bound by geography. If you are scheduled to buy groceries at 6:00 PM but you happen to drive past the supermarket at 4:30 PM, standard apps stay silent. Worse, if you pass within 100 meters of an errand location on your commute home and forget, you must make a frustrating return trip.
+        </p>
+      </div>
+    </div>
+
+    <div class="col-md-6" data-aos="fade-left">
+      <div class="card card-tmr h-100 p-4 border-0">
+        <div class="stat-icon bg-success-subtle text-success mb-3">
+          <i class="fas fa-check-circle"></i>
+        </div>
+        <h4 class="fw-bold text-dark mb-3">The Smart Solution</h4>
+        <p class="text-muted">
+          <strong>Track My Ride</strong> attaches geodetic coordinates, venue metadata, and custom radius boundaries to every task. By executing the Haversine trigonometric distance formula through continuous background geolocation polling, the app triggers proactive alerts (browser notifications, in-app banners, and audio chimes) the exact instant you breach the target radius.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Architecture & System Design -->
+  <div class="card card-tmr p-4 p-md-5 mb-5 border-0 shadow-sm" data-aos="fade-up">
+    <h3 class="fw-bold text-dark mb-4">
+      <i class="fas fa-sitemap text-primary me-2"></i> System Architecture &amp; Modular Django Structure
+    </h3>
+    <p class="text-muted mb-4">
+      The backend is structured into decoupled, single-responsibility Django apps to ensure high cohesion, low coupling, and seamless horizontal scalability:
+    </p>
+
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="p-3 bg-light rounded-3 h-100 border">
+          <h6 class="fw-bold text-primary mb-2"><i class="fas fa-user-lock me-2"></i> accounts app</h6>
+          <p class="small text-muted mb-0">
+            Handles user registration, authentication, password recovery, profile preferences (preferred radius, avatar, audio toggle), and strict user task data isolation.
+          </p>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="p-3 bg-light rounded-3 h-100 border">
+          <h6 class="fw-bold text-primary mb-2"><i class="fas fa-tasks me-2"></i> tasks app</h6>
+          <p class="small text-muted mb-0">
+            Manages full CRUD operations, category taxonomy, priority levels (Low, Medium, High, Urgent), status pipelines, calendar feeds, and CSV spreadsheet exports.
+          </p>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="p-3 bg-light rounded-3 h-100 border">
+          <h6 class="fw-bold text-primary mb-2"><i class="fas fa-map-marked-alt me-2"></i> maps app</h6>
+          <p class="small text-muted mb-0">
+            Coordinates Google Maps JS API, Place Autocomplete, draggable pin geocoding, radius circle visualizer, and the full interactive map canvas with custom markers.
+          </p>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="p-3 bg-light rounded-3 h-100 border">
+          <h6 class="fw-bold text-primary mb-2"><i class="fas fa-satellite-dish me-2"></i> notifications app</h6>
+          <p class="small text-muted mb-0">
+            Implements the live Geofence Proximity engine. Executes Haversine calculations, prevents notification spam via cooldown windows, and stores reminder logs.
+          </p>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="p-3 bg-light rounded-3 h-100 border">
+          <h6 class="fw-bold text-primary mb-2"><i class="fas fa-envelope me-2"></i> contact app</h6>
+          <p class="small text-muted mb-0">
+            Captures user inquiries, feedback, and support tickets with database persistence and Django admin resolution workflows.
+          </p>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="p-3 bg-light rounded-3 h-100 border">
+          <h6 class="fw-bold text-primary mb-2"><i class="fas fa-tachometer-alt me-2"></i> core app</h6>
+          <p class="small text-muted mb-0">
+            Orchestrates public landing pages, analytical command dashboard, global template context processors, and aggregate metric calculations.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Technology Stack Breakdown -->
+  <div class="card card-tmr p-4 p-md-5 mb-5 border-0 shadow-sm" data-aos="fade-up">
+    <h3 class="fw-bold text-dark mb-4">
+      <i class="fas fa-laptop-code text-primary me-2"></i> Full Technology Stack
+    </h3>
+
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th style="width: 25%;">Layer</th>
+            <th style="width: 35%;">Technology</th>
+            <th>Role &amp; Implementation</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="fw-bold text-primary">Backend Framework</td>
+            <td>Python 3.10+ &amp; Django 5</td>
+            <td class="small text-muted">ORM, Model-View-Template architecture, CSRF defense, and secure session management.</td>
+          </tr>
+          <tr>
+            <td class="fw-bold text-primary">Frontend Framework</td>
+            <td>Bootstrap 5.3 &amp; CSS3</td>
+            <td class="small text-muted">Mobile-first responsive grid, custom glassmorphism design system, and sleek card components.</td>
+          </tr>
+          <tr>
+            <td class="fw-bold text-primary">Mapping Services</td>
+            <td>Google Maps &amp; Places API</td>
+            <td class="small text-muted">Place search autocomplete, draggable pins, reverse geocoding, radius circle rendering.</td>
+          </tr>
+          <tr>
+            <td class="fw-bold text-primary">Geofence Engine</td>
+            <td>HTML5 Geolocation &amp; Haversine</td>
+            <td class="small text-muted">Client-side GPS tracking coupled with server-side mathematical distance computations.</td>
+          </tr>
+          <tr>
+            <td class="fw-bold text-primary">Audio &amp; Push Alerts</td>
+            <td>Web Audio API &amp; Notification API</td>
+            <td class="small text-muted">Frequency-synthesized dual-tone bell chime and native OS desktop push notifications.</td>
+          </tr>
+          <tr>
+            <td class="fw-bold text-primary">Data Visualizations</td>
+            <td>Chart.js</td>
+            <td class="small text-muted">Interactive doughnut charts illustrating user task category distributions.</td>
+          </tr>
+          <tr>
+            <td class="fw-bold text-primary">Database</td>
+            <td>SQLite (Dev) / PostgreSQL (Prod)</td>
+            <td class="small text-muted">Relational data persistence with strict foreign key cascading and indexed queries.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Future Roadmap -->
+  <div class="card card-tmr p-4 p-md-5 mb-5 border-0 shadow-sm" data-aos="fade-up">
+    <h3 class="fw-bold text-dark mb-4">
+      <i class="fas fa-road text-primary me-2"></i> Future Roadmap &amp; Enhancements
+    </h3>
+    <div class="row g-3">
+      <div class="col-md-6">
+        <div class="d-flex align-items-start gap-3 p-3 bg-light rounded-3">
+          <i class="fas fa-cloud-sun text-warning fa-lg mt-1"></i>
+          <div>
+            <h6 class="fw-bold mb-1">Live Venue Weather Integration</h6>
+            <p class="small text-muted mb-0">Display precipitation and temperature forecasts for task locations to help plan outdoor errands.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="d-flex align-items-start gap-3 p-3 bg-light rounded-3">
+          <i class="fas fa-users text-info fa-lg mt-1"></i>
+          <div>
+            <h6 class="fw-bold mb-1">Collaborative Task Sharing</h6>
+            <p class="small text-muted mb-0">Share grocery lists or venue errands with family members or team colleagues.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="d-flex align-items-start gap-3 p-3 bg-light rounded-3">
+          <i class="fas fa-paperclip text-success fa-lg mt-1"></i>
+          <div>
+            <h6 class="fw-bold mb-1">Receipt &amp; Invoice Attachments</h6>
+            <p class="small text-muted mb-0">Attach PDF receipts, images of store items, or appointment letters directly to tasks.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="d-flex align-items-start gap-3 p-3 bg-light rounded-3">
+          <i class="fas fa-mobile-alt text-danger fa-lg mt-1"></i>
+          <div>
+            <h6 class="fw-bold mb-1">Progressive Web App (PWA) Offline Sync</h6>
+            <p class="small text-muted mb-0">Service worker caching and background periodic sync for zero-connectivity situations.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Developer Card -->
+  <div class="card card-tmr p-4 p-md-5 border-0 bg-primary-subtle text-dark" data-aos="zoom-in">
+    <div class="row align-items-center g-4">
+      <div class="col-md-3 text-center">
+        <img src="https://ui-avatars.com/api/?name=Full+Stack+Developer&background=2563eb&color=fff&size=160&bold=true" class="rounded-circle shadow" width="120" height="120" alt="Developer">
+      </div>
+      <div class="col-md-9">
+        <span class="badge bg-primary text-white mb-2">Lead Full Stack Engineer</span>
+        <h4 class="fw-bold mb-2">Designed &amp; Developed for Portfolio</h4>
+        <p class="text-secondary small mb-3">
+          This project was conceived and crafted to demonstrate production-grade full-stack engineering competency, modular Django patterns, rigorous API integration, responsive interface design, and real-time browser Geolocation capabilities.
+        </p>
+        <div class="d-flex flex-wrap gap-2">
+          <a href="{% url 'contact:contact' %}" class="btn btn-sm btn-primary">
+            <i class="far fa-envelope me-1"></i> Get In Touch
+          </a>
+          <a href="{% url 'tasks:task_list' %}" class="btn btn-sm btn-outline-primary">
+            <i class="fas fa-tasks me-1"></i> Explore Tasks Module
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

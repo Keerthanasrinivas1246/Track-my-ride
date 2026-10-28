@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Calendar View - Track My Ride{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <!-- Calendar Header -->
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+      <h2 class="fw-bold text-dark mb-1">Task Calendar Schedule</h2>
+      <p class="text-muted small mb-0">Visual monthly calendar mapped with your location-based tasks</p>
+    </div>
+    <div class="d-flex gap-2">
+      <a href="{% url 'tasks:task_create' %}" class="btn btn-primary shadow-sm">
+        <i class="fas fa-plus me-1"></i> Add Task
+      </a>
+      <a href="{% url 'tasks:task_list' %}" class="btn btn-outline-secondary">
+        <i class="fas fa-list me-1"></i> List View
+      </a>
+    </div>
+  </div>
+
+  <!-- Calendar Controls Bar -->
+  <div class="card card-tmr border-0 shadow-sm p-3 mb-4">
+    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3">
+      <div class="d-flex align-items-center gap-2">
+        <button id="btn-cal-prev" class="btn btn-light border btn-sm" title="Previous Month">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+        <button id="btn-cal-today" class="btn btn-light border btn-sm fw-semibold">
+          Today
+        </button>
+        <button id="btn-cal-next" class="btn btn-light border btn-sm" title="Next Month">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+        <h4 id="calendar-month-title" class="fw-bold text-dark mb-0 ms-2"></h4>
+      </div>
+
+      <!-- Priority Color Legends -->
+      <div class="d-flex flex-wrap align-items-center gap-3 small text-muted">
+        <div><span class="badge bg-danger rounded-circle p-1 me-1"> </span> Urgent</div>
+        <div><span class="badge bg-warning text-dark rounded-circle p-1 me-1"> </span> High</div>
+        <div><span class="badge bg-primary rounded-circle p-1 me-1"> </span> Medium</div>
+        <div><span class="badge bg-success rounded-circle p-1 me-1"> </span> Low</div>
+        <div><span class="badge bg-secondary rounded-circle p-1 me-1"> </span> Completed</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Calendar Grid Container -->
+  <div class="card card-tmr border-0 shadow-sm overflow-hidden mb-4">
+    <div id="calendar-grid" class="p-2"></div>
+  </div>
+</div>
+
+<!-- Task Preview Modal on Calendar Click -->
+<div class="modal fade" id="taskPreviewModal" tabindex="-1" aria-labelledby="taskPreviewModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title fw-bold" id="taskPreviewModalLabel">
+          <i class="fas fa-calendar-check me-2"></i> Task Schedule
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-4">
+        <h5 id="modal-task-title" class="fw-bold text-dark mb-2"></h5>
+        <p class="text-muted small mb-3">
+          <i class="fas fa-map-marker-alt text-danger me-1"></i> <span id="modal-task-place"></span>
+        </p>
+
+        <div class="d-flex gap-2 mb-3">
+          <span class="badge bg-light text-dark border">Priority: <strong id="modal-task-priority"></strong></span>
+          <span class="badge bg-light text-dark border">Status: <strong id="modal-task-status"></strong></span>
+        </div>
+
+        <div class="d-flex justify-content-end gap-2 pt-3 border-top">
+          <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+          <a id="modal-task-link" href="#" class="btn btn-sm btn-primary px-3 shadow-sm">
+            <i class="fas fa-external-link-alt me-1"></i> View Full Details
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  window.calendarEventsData = {{ calendar_events_json|safe }};
+</script>
+<script src="{% static 'js/calendar.js' %}"></script>
+{% endblock %}

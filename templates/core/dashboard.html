@@ -1,0 +1,552 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - Track My Ride{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <!-- Top Greeting & Header -->
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+      <h2 class="fw-bold text-dark mb-1">
+        Welcome back, {{ user.first_name|default:user.username }}! 👋
+      </h2>
+      <p class="text-muted small mb-0">
+        Here is your location-based tasks briefing for today.
+      </p>
+    </div>
+    <div class="d-flex flex-wrap gap-2">
+      <a href="{% url 'tasks:task_create' %}" class="btn btn-primary shadow-sm">
+        <i class="fas fa-plus me-1"></i> New Location Task
+      </a>
+      <a href="{% url 'maps:map_view' %}" class="btn btn-outline-primary">
+        <i class="fas fa-map-marked-alt me-1"></i> View Live Map
+      </a>
+      <a href="{% url 'tasks:export_csv' %}" class="btn btn-outline-secondary" title="Export Tasks to CSV">
+        <i class="fas fa-file-export me-1"></i> Export CSV
+      </a>
+    </div>
+  </div>
+
+  <!-- Realtime GPS Geofence Tracker Alert Banner (If permissions needed) -->
+  <div class="alert alert-info border-0 shadow-sm d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-4">
+    <div class="d-flex align-items-center gap-3">
+      <div class="stat-icon bg-info text-white" style="width: 40px; height: 40px;">
+        <i class="fas fa-satellite-dish"></i>
+      </div>
+      <div>
+        <div class="fw-bold text-dark small">Live Background Geofencing Active</div>
+        <div class="text-muted" style="font-size: 0.8rem;">
+          Your browser is continuously measuring GPS proximity to trigger alerts when you arrive near tasks.
+        </div>
+      </div>
+    </div>
+    <button id="btn-enable-notifications" class="btn btn-sm btn-info text-white px-3">
+      <i class="fas fa-bell me-1"></i> Enable Push Alerts
+    </button>
+  </div>
+
+  <!-- Metric Stat Cards -->
+  <div class="row g-3 mb-4">
+    <!-- Total Tasks -->
+    <div class="col-xl-3 col-md-6">
+      <div class="stat-card">
+        <div>
+          <div class="text-muted small fw-semibold text-uppercase">Total Tasks</div>
+          <div class="fs-2 fw-bold text-dark mt-1">{{ total_tasks }}</div>
+          <a href="{% url 'tasks:task_list' %}" class="small text-primary text-decoration-none">View all &rarr;</a>
+        </div>
+        <div class="stat-icon bg-primary-subtle text-primary">
+          <i class="fas fa-clipboard-list"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Today's Tasks -->
+    <div class="col-xl-3 col-md-6">
+      <div class="stat-card">
+        <div>
+          <div class="text-muted small fw-semibold text-uppercase">Today's Tasks</div>
+          <div class="fs-2 fw-bold text-dark mt-1">{{ today_tasks_count }}</div>
+          <a href="{% url 'tasks:task_list' %}?date_filter=today" class="small text-warning text-decoration-none">Due today &rarr;</a>
+        </div>
+        <div class="stat-icon bg-warning-subtle text-warning">
+          <i class="fas fa-calendar-day"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pending Tasks -->
+    <div class="col-xl-3 col-md-6">
+      <div class="stat-card">
+        <div>
+          <div class="text-muted small fw-semibold text-uppercase">Pending Tasks</div>
+          <div class="fs-2 fw-bold text-dark mt-1">{{ pending_tasks }}</div>
+          <a href="{% url 'tasks:task_list' %}?status=pending" class="small text-danger text-decoration-none">Needs action &rarr;</a>
+        </div>
+        <div class="stat-icon bg-danger-subtle text-danger">
+          <i class="fas fa-clock"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Completed Tasks -->
+    <div class="col-xl-3 col-md-6">
+      <div class="stat-card">
+        <div>
+          <div class="text-muted small fw-semibold text-uppercase">Completed</div>
+          <div class="fs-2 fw-bold text-dark mt-1">{{ completed_tasks }}</div>
+          <a href="{% url 'tasks:task_list' %}?status=completed" class="small text-success text-decoration-none">Archive &rarr;</a>
+        </div>
+        <div class="stat-icon bg-success-subtle text-success">
+          <i class="fas fa-check-double"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content Grid -->
+  <div class="row g-4">
+    <!-- Left Column: Nearby Tasks, Active Map & Urgent Tasks -->
+    <div class="col-lg-7">
+      <!-- Live Nearby Tasks (GPS Calculated) -->
+      <div class="card card-tmr mb-4">
+        <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+          <div class="d-flex align-items-center gap-2">
+            <span class="radar-pulse"></span>
+            <h6 class="fw-bold text-dark mb-0">Nearby Tasks (Live GPS Proximity)</h6>
+          </div>
+          <span class="badge bg-primary-subtle text-primary">Haversine Ranked</span>
+        </div>
+        <div class="card-body">
+          <div id="nearby-tasks-container">
+            <div class="text-center py-4 text-muted">
+              <div class="spinner-border spinner-border-sm text-primary mb-2" role="status"></div>
+              <p class="small mb-0">Acquiring current GPS location and calculating distances...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active Tasks Interactive Map Preview -->
+      <div class="card card-tmr mb-4">
+        <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+          <div class="d-flex align-items-center gap-2">
+            <i class="fas fa-map-marked-alt text-primary"></i>
+            <h6 class="fw-bold text-dark mb-0">Active Tasks Map Preview</h6>
+          </div>
+          <a href="{% url 'maps:map_view' %}" class="small text-primary text-decoration-none">
+            Full Screen Map <i class="fas fa-arrow-right ms-1"></i>
+          </a>
+        </div>
+        <div class="card-body p-2">
+          <div id="dashboard-map-canvas" class="dashboard-map-container" style="height: 360px; width: 100%; border-radius: 10px;"></div>
+        </div>
+      </div>
+
+      <!-- Today's & Upcoming Agenda -->
+      <div class="card card-tmr mb-4">
+        <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+          <h6 class="fw-bold text-dark mb-0">
+            <i class="fas fa-calendar-check text-primary me-2"></i> Today's Schedule
+          </h6>
+          <a href="{% url 'tasks:calendar' %}" class="small text-primary text-decoration-none">Full Calendar &rarr;</a>
+        </div>
+        <div class="card-body p-0">
+          {% if today_tasks %}
+          <div class="list-group list-group-flush">
+            {% for task in today_tasks %}
+            <div class="list-group-item p-3 d-flex justify-content-between align-items-center">
+              <div>
+                <div class="d-flex align-items-center gap-2 mb-1">
+                  <span class="badge {{ task.priority_badge_class }}">{{ task.get_priority_display }}</span>
+                  <a href="{% url 'tasks:task_detail' task.id %}" class="fw-semibold text-dark text-decoration-none">
+                    {{ task.title }}
+                  </a>
+                </div>
+                <div class="text-muted small">
+                  <i class="fas fa-map-marker-alt text-danger me-1"></i> {{ task.place_name }}
+                  {% if task.due_time %}&bull; <i class="far fa-clock me-1"></i> {{ task.due_time|time:"g:i A" }}{% endif %}
+                </div>
+              </div>
+              <div class="d-flex gap-2">
+                <a href="{{ task.directions_url }}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-primary" title="Directions">
+                  <i class="fas fa-directions"></i>
+                </a>
+                <button class="btn btn-sm btn-outline-success btn-toggle-status" data-task-id="{{ task.id }}" title="Toggle Complete">
+                  <i class="fas fa-check"></i>
+                </button>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
+          <div class="text-center py-4 text-muted">
+            <i class="fas fa-mug-hot fa-2x mb-2 text-primary opacity-50"></i>
+            <p class="small mb-0">No tasks scheduled for today. You're all clear!</p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- High Priority / Urgent Tasks -->
+      <div class="card card-tmr">
+        <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+          <h6 class="fw-bold text-dark mb-0">
+            <i class="fas fa-exclamation-triangle text-danger me-2"></i> Urgent &amp; High Priority Tasks
+          </h6>
+          <a href="{% url 'tasks:task_list' %}?priority=urgent" class="small text-danger text-decoration-none">View all urgent &rarr;</a>
+        </div>
+        <div class="card-body p-0">
+          {% if urgent_tasks %}
+          <div class="list-group list-group-flush">
+            {% for task in urgent_tasks %}
+            <div class="list-group-item p-3 d-flex justify-content-between align-items-center">
+              <div>
+                <div class="d-flex align-items-center gap-2 mb-1">
+                  <span class="badge {{ task.priority_badge_class }}">{{ task.get_priority_display }}</span>
+                  <a href="{% url 'tasks:task_detail' task.id %}" class="fw-semibold text-dark text-decoration-none">
+                    {{ task.title }}
+                  </a>
+                </div>
+                <div class="text-muted small">
+                  <i class="fas fa-map-pin text-primary me-1"></i> {{ task.place_name }}
+                  &bull; Due {{ task.due_date|date:"M d" }}
+                </div>
+              </div>
+              <a href="{% url 'tasks:task_detail' task.id %}" class="btn btn-sm btn-light border">
+                <i class="fas fa-arrow-right"></i>
+              </a>
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
+          <div class="text-center py-4 text-muted">
+            <i class="fas fa-check-circle fa-2x text-success opacity-50 mb-2"></i>
+            <p class="small mb-0">No urgent tasks pending right now.</p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Chart & Recent Activity -->
+    <div class="col-lg-5">
+      <!-- Category Breakdown Chart -->
+      <div class="card card-tmr mb-4">
+        <div class="card-header bg-white py-3 border-bottom">
+          <h6 class="fw-bold text-dark mb-0">
+            <i class="fas fa-chart-pie text-primary me-2"></i> Tasks by Category
+          </h6>
+        </div>
+        <div class="card-body">
+          <div style="height: 240px; position: relative;">
+            <canvas id="categoryChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Reminders Activity Log -->
+      <div class="card card-tmr mb-4">
+        <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+          <h6 class="fw-bold text-dark mb-0">
+            <i class="fas fa-history text-secondary me-2"></i> Recent Geofence Alerts
+          </h6>
+          <a href="{% url 'notifications:notification_list' %}" class="small text-primary text-decoration-none">All alerts &rarr;</a>
+        </div>
+        <div class="card-body p-0">
+          {% if recent_reminders %}
+          <div class="list-group list-group-flush">
+            {% for rem in recent_reminders %}
+            <div class="list-group-item p-3">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <span class="badge bg-danger-subtle text-danger small">Triggered Alert</span>
+                <span class="text-muted" style="font-size: 0.72rem;">{{ rem.triggered_at|timesince }} ago</span>
+              </div>
+              <div class="fw-semibold text-dark small mb-1">{{ rem.task.title }}</div>
+              <p class="text-muted mb-0" style="font-size: 0.8rem;">
+                <i class="fas fa-location-arrow text-primary me-1"></i> Triggered at {{ rem.distance_at_trigger|floatformat:0 }}m from {{ rem.task.place_name }}
+              </p>
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
+          <div class="text-center py-4 text-muted">
+            <i class="far fa-bell-slash fa-2x mb-2 text-secondary opacity-50"></i>
+            <p class="small mb-0">No geofence alerts recorded yet.</p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Quick Tips Card -->
+      <div class="card card-tmr bg-primary-subtle border-0">
+        <div class="card-body p-4">
+          <h6 class="fw-bold text-primary mb-2">
+            <i class="fas fa-lightbulb me-2"></i> Pro Tip: Custom Geofencing
+          </h6>
+          <p class="small text-dark mb-0">
+            Driving on highways? Expand your reminder radius to <strong>1,000m - 2,000m</strong> in the task form so you have ample time to take the exit!
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Initialize Chart.js Category Breakdown & Dashboard Map
+  document.addEventListener('DOMContentLoaded', () => {
+    // 1. Chart.js
+    const ctx = document.getElementById('categoryChart');
+    if (ctx) {
+      const labels = {{ chart_labels|safe }};
+      const data = {{ chart_data|safe }};
+      const colors = {{ chart_colors|safe }};
+
+      if (data.length === 0) {
+        ctx.parentNode.innerHTML = `
+          <div class="d-flex flex-column align-items-center justify-content-center h-100 text-muted">
+            <i class="fas fa-chart-pie fa-2x mb-2 opacity-50"></i>
+            <p class="small mb-0">Create tasks to see category distribution.</p>
+          </div>
+        `;
+      } else {
+        new Chart(ctx, {
+          type: 'doughnut',
+          data: {
+            labels: labels,
+            datasets: [{
+              data: data,
+              backgroundColor: colors,
+              borderWidth: 2,
+              borderColor: '#ffffff'
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: {
+                  boxWidth: 12,
+                  font: { size: 11 }
+                }
+              }
+            },
+            cutout: '65%'
+          }
+        });
+      }
+    }
+
+    // 2. Dashboard Map Preview
+    const mapContainer = document.getElementById('dashboard-map-canvas');
+    if (mapContainer) {
+      const tasks = {{ dashboard_tasks_json|safe }};
+
+      function getPriorityColor(priority) {
+        switch (priority) {
+          case 'urgent': return '#ef4444';
+          case 'high': return '#f97316';
+          case 'medium': return '#2563eb';
+          case 'low': return '#10b981';
+          default: return '#64748b';
+        }
+      }
+
+      function initDashboardGoogleMap() {
+        mapContainer.innerHTML = '';
+        let center = { lat: 12.2958, lng: 76.6394 }; // Default Mysore
+        let zoom = 12;
+
+        if (tasks.length > 0) {
+          center = { lat: tasks[0].lat, lng: tasks[0].lng };
+        }
+
+        const map = new google.maps.Map(mapContainer, {
+          center: center,
+          zoom: zoom,
+          mapTypeControl: false,
+          streetViewControl: false,
+          fullscreenControl: true,
+          zoomControl: true,
+        });
+
+        const infoWindow = new google.maps.InfoWindow();
+        const bounds = new google.maps.LatLngBounds();
+
+        if (tasks.length === 0) {
+          new google.maps.Marker({
+            position: center,
+            map: map,
+            title: "Mysore Center (No active tasks yet)",
+          });
+        } else {
+          tasks.forEach(task => {
+            const pos = { lat: task.lat, lng: task.lng };
+            bounds.extend(pos);
+
+            const color = getPriorityColor(task.priority);
+
+            const marker = new google.maps.Marker({
+              position: pos,
+              map: map,
+              title: task.title,
+              icon: {
+                path: "M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z",
+                fillColor: color,
+                fillOpacity: 1,
+                strokeWeight: 1.5,
+                strokeColor: "#ffffff",
+                scale: 1.5,
+                anchor: new google.maps.Point(12, 22),
+              }
+            });
+
+            // Radius Circle
+            new google.maps.Circle({
+              strokeColor: color,
+              strokeOpacity: 0.6,
+              strokeWeight: 1.5,
+              fillColor: color,
+              fillOpacity: 0.12,
+              map: map,
+              center: pos,
+              radius: task.radius
+            });
+
+            marker.addListener('click', () => {
+              const content = `
+                <div class="info-window-card">
+                  <span class="badge" style="background-color: ${color}; color: #fff;">${task.priority_display}</span>
+                  <h6 class="fw-bold mt-1 mb-1">${task.title}</h6>
+                  <p class="text-muted small mb-2"><i class="fas fa-map-pin text-danger me-1"></i>${task.place_name}</p>
+                  <a href="${task.url}" class="btn btn-sm btn-primary py-0 px-2 small">View Task</a>
+                </div>
+              `;
+              infoWindow.setContent(content);
+              infoWindow.open(map, marker);
+            });
+          });
+
+          if (tasks.length > 1) {
+            map.fitBounds(bounds, { padding: 30 });
+          } else if (tasks.length === 1) {
+            map.setCenter({ lat: tasks[0].lat, lng: tasks[0].lng });
+            map.setZoom(15);
+          }
+        }
+      }
+
+      function initDashboardLeafletMap() {
+        if (typeof L === 'undefined') return;
+        mapContainer.innerHTML = '';
+
+        let center = [12.2958, 76.6394];
+        if (tasks.length > 0) {
+          center = [tasks[0].lat, tasks[0].lng];
+        }
+
+        const leafletMap = L.map(mapContainer, {
+          center: center,
+          zoom: 12,
+          zoomControl: true
+        });
+
+        // Google Maps Tile Layers
+        const googleRoads = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+          maxZoom: 20,
+          subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+          attribution: '&copy; Google Maps'
+        });
+
+        const googleSatellite = L.tileLayer('https://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}', {
+          maxZoom: 20,
+          subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+          attribution: '&copy; Google Maps'
+        });
+
+        const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          attribution: '&copy; OpenStreetMap'
+        });
+
+        googleRoads.addTo(leafletMap);
+
+        const baseLayers = {
+          "Google Streets": googleRoads,
+          "Google Satellite": googleSatellite,
+          "OpenStreetMap": osm
+        };
+        L.control.layers(baseLayers, null, { position: 'topright' }).addTo(leafletMap);
+
+        const bounds = [];
+        tasks.forEach(task => {
+          const color = getPriorityColor(task.priority);
+          bounds.push([task.lat, task.lng]);
+
+          L.circle([task.lat, task.lng], {
+            radius: task.radius,
+            color: color,
+            fillColor: color,
+            fillOpacity: 0.15,
+            weight: 1.5
+          }).addTo(leafletMap);
+
+          const customIcon = L.divIcon({
+            className: 'custom-div-pin',
+            html: `
+              <div style="
+                background-color: ${color};
+                width: 28px;
+                height: 28px;
+                border-radius: 50% 50% 50% 0;
+                transform: rotate(-45deg);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border: 2px solid #ffffff;
+                box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+              ">
+                <i class="fas ${task.category_icon || 'fa-map-pin'}" style="transform: rotate(45deg); color: #ffffff; font-size: 11px;"></i>
+              </div>
+            `,
+            iconSize: [28, 28],
+            iconAnchor: [14, 28],
+            popupAnchor: [0, -28]
+          });
+
+          const marker = L.marker([task.lat, task.lng], { icon: customIcon }).addTo(leafletMap);
+          marker.bindPopup(`
+            <div style="min-width: 180px;">
+              <span class="badge" style="background-color: ${color}; color: #fff;">${task.priority_display}</span>
+              <h6 class="fw-bold mt-1 mb-1">${task.title}</h6>
+              <p class="text-muted small mb-2"><i class="fas fa-map-pin text-danger me-1"></i>${task.place_name}</p>
+              <a href="${task.url}" class="btn btn-sm btn-primary py-0 px-2 small text-white">View Task</a>
+            </div>
+          `);
+        });
+
+        if (bounds.length > 1) {
+          leafletMap.fitBounds(bounds, { padding: [30, 30] });
+        }
+      }
+
+      if (window.GOOGLE_MAPS_KEY_PRESENT && !window.googleMapsLoaded) {
+        mapContainer.innerHTML = `
+          <div class="d-flex flex-column align-items-center justify-content-center h-100 bg-light text-muted">
+            <div class="spinner-border spinner-border-sm text-primary mb-2" role="status"></div>
+            <div class="small fw-semibold">Loading Active Tasks Map...</div>
+          </div>
+        `;
+      }
+
+      window.runWhenGoogleMapsReady(initDashboardGoogleMap, initDashboardLeafletMap);
+    }
+  });
+</script>
+{% endblock %}
