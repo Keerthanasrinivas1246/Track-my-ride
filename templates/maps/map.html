@@ -11,13 +11,13 @@
       <!-- Title & Live Counter -->
       <div class="col-xl-3 col-lg-4 col-12">
         <div class="d-flex align-items-center gap-2">
-          <div class="brand-icon" style="width: 32px; height: 32px; font-size: 0.9rem;">
+          <div class="brand-icon" style="width: 36px; height: 36px; font-size: 1rem;">
             <i class="fas fa-map-marked-alt"></i>
           </div>
           <div>
-            <h5 class="fw-bold text-dark mb-0">Interactive Task Map</h5>
-            <div class="text-muted small" style="font-size: 0.75rem;">
-              Showing <span id="map-tasks-count" class="fw-bold text-primary">{{ total_tasks }}</span> location pins
+            <h5 class="fw-bold mb-0">Interactive Task Map</h5>
+            <div class="text-muted small" style="font-size: 0.78rem;">
+              Showing <span id="map-tasks-count" class="fw-bold text-primary">{{ total_tasks }}</span> geofence markers
             </div>
           </div>
         </div>
@@ -40,10 +40,10 @@
           <div class="col-md-2 col-6">
             <select id="map-filter-priority" class="form-select form-select-sm">
               <option value="">All Priorities</option>
-              <option value="urgent">Urgent (Red)</option>
-              <option value="high">High (Orange)</option>
-              <option value="medium">Medium (Blue)</option>
-              <option value="low">Low (Green)</option>
+              <option value="urgent">Urgent</option>
+              <option value="high">High</option>
+              <option value="medium">Medium</option>
+              <option value="low">Low</option>
             </select>
           </div>
 
@@ -89,9 +89,9 @@
     <div id="tasks-map-canvas" class="map-canvas-container shadow-sm" style="height: calc(100vh - 220px); min-height: 500px;"></div>
 
     <!-- Floating Map Legend Overlay -->
-    <div class="position-absolute bottom-0 start-0 m-3 p-3 bg-white bg-opacity-95 rounded-3 shadow border d-none d-md-block" style="z-index: 10; max-width: 250px;">
-      <h6 class="fw-bold text-dark small mb-2"><i class="fas fa-info-circle text-primary me-1"></i> Marker Legend</h6>
-      <div class="d-flex flex-column gap-1 small text-muted" style="font-size: 0.75rem;">
+    <div class="position-absolute bottom-0 start-0 m-3 p-3 card-tmr rounded-3 shadow border d-none d-md-block" style="z-index: 1000; max-width: 250px;">
+      <h6 class="fw-bold small mb-2"><i class="fas fa-layer-group text-primary me-1"></i> Marker Legend</h6>
+      <div class="d-flex flex-column gap-1 small text-muted" style="font-size: 0.78rem;">
         <div class="d-flex align-items-center gap-2">
           <span style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: #ef4444;"></span>
           <span>Urgent Priority</span>
@@ -101,7 +101,7 @@
           <span>High Priority</span>
         </div>
         <div class="d-flex align-items-center gap-2">
-          <span style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: #2563eb;"></span>
+          <span style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: #4f46e5;"></span>
           <span>Medium Priority</span>
         </div>
         <div class="d-flex align-items-center gap-2">

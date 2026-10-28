@@ -226,7 +226,7 @@ class GeofenceTracker {
         <small class="text-white-50">Just now</small>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
       </div>
-      <div class="toast-body bg-white text-dark">
+      <div class="toast-body">
         <p class="mb-1 fw-bold fs-6">${item.task_title}</p>
         <p class="mb-2 text-muted small"><i class="fas fa-location-dot me-1 text-danger"></i>${item.place_name} &bull; <strong>${item.distance_meters}m away</strong></p>
         <div class="d-flex gap-2">
@@ -290,13 +290,13 @@ class GeofenceTracker {
     nearbyTasks.forEach(task => {
       const insideBadge = task.is_inside_radius
         ? '<span class="badge bg-danger animate__animated animate__pulse animate__infinite">IN RADIUS</span>'
-        : `<span class="badge bg-light text-dark border">${task.distance_display}</span>`;
+        : `<span class="badge bg-light text-secondary border">${task.distance_display}</span>`;
 
       html += `
         <div class="list-group-item px-0 py-3 border-bottom">
           <div class="d-flex justify-content-between align-items-start mb-1">
             <h6 class="mb-0 fw-semibold">
-              <a href="${task.url}" class="text-dark text-decoration-none">${task.title}</a>
+              <a href="${task.url}" class="text-decoration-none">${task.title}</a>
             </h6>
             ${insideBadge}
           </div>

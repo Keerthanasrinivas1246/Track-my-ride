@@ -97,6 +97,12 @@ def task_list_view(request):
     categories = Category.objects.all()
     view_mode = request.GET.get('view', 'grid')  # 'grid' or 'table'
 
+    # Pre-populated Quick Add Form for modal
+    initial_data = {}
+    if hasattr(request.user, 'profile') and request.user.profile.preferred_radius:
+        initial_data['reminder_radius'] = request.user.profile.preferred_radius
+    quick_task_form = TaskForm(initial=initial_data)
+
     context = {
         'page_obj': page_obj,
         'tasks': page_obj.object_list,
@@ -109,6 +115,7 @@ def task_list_view(request):
         'current_sort': sort_by,
         'view_mode': view_mode,
         'stats': stats,
+        'quick_task_form': quick_task_form,
     }
     return render(request, 'tasks/task_list.html', context)
 

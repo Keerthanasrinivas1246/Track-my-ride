@@ -8,18 +8,25 @@
   <!-- Header Bar -->
   <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
     <div>
-      <h2 class="fw-bold text-dark mb-1">My Location Tasks</h2>
-      <p class="text-muted small mb-0">Organize, filter, and track all your geofenced to-dos</p>
+      <div class="d-flex align-items-center gap-2 mb-1">
+        <h2 class="fw-bold mb-0">My Tasks</h2>
+        <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3">{{ stats.all }} total</span>
+      </div>
+      <p class="text-muted small mb-0">Organize, filter, and track all your geofenced location to-dos</p>
     </div>
     <div class="d-flex flex-wrap gap-2">
-      <a href="{% url 'tasks:task_create' %}" class="btn btn-primary shadow-sm">
-        <i class="fas fa-plus me-1"></i> Add New Task
+      <!-- Quick Add Modal Trigger -->
+      <button type="button" class="btn btn-primary shadow-sm" data-bs-toggle="modal" data-bs-target="#quickTaskModal">
+        <i class="fas fa-plus me-1"></i> Quick Add
+      </button>
+      <a href="{% url 'tasks:task_create' %}" class="btn btn-outline-primary">
+        <i class="fas fa-sliders-h me-1"></i> Full Form
       </a>
-      <a href="{% url 'maps:map_view' %}" class="btn btn-outline-primary">
+      <a href="{% url 'maps:map_view' %}" class="btn btn-outline-secondary">
         <i class="fas fa-map-marked-alt me-1"></i> View on Map
       </a>
       <a href="{% url 'tasks:export_csv' %}" class="btn btn-outline-secondary" title="Export as CSV spreadsheet">
-        <i class="fas fa-download me-1"></i> Export CSV
+        <i class="fas fa-download me-1"></i> CSV
       </a>
     </div>
   </div>
@@ -30,17 +37,17 @@
       <!-- Search input -->
       <div class="col-lg-4 col-md-6">
         <div class="input-group">
-          <span class="input-group-text bg-light text-muted border-end-0"><i class="fas fa-search"></i></span>
-          <input type="text" name="q" class="form-control border-start-0" placeholder="Search tasks, venues, notes..." value="{{ query }}">
+          <span class="input-group-text"><i class="fas fa-search"></i></span>
+          <input type="text" name="q" class="form-control" placeholder="Search tasks, venues, notes..." value="{{ query }}">
           {% if query %}
-          <a href="{% url 'tasks:task_list' %}" class="input-group-text bg-light text-muted text-decoration-none">&times;</a>
+          <a href="{% url 'tasks:task_list' %}" class="input-group-text text-decoration-none">&times;</a>
           {% endif %}
         </div>
       </div>
 
       <!-- Category Filter -->
       <div class="col-lg-2 col-md-3 col-6">
-        <select name="category" class="form-select">
+        <select name="category" class="form-select" onchange="this.form.submit()">
           <option value="">All Categories</option>
           {% for cat in categories %}
           <option value="{{ cat.id }}" {% if current_category == cat.id|stringformat:"s" %}selected{% endif %}>{{ cat.name }}</option>
@@ -50,7 +57,7 @@
 
       <!-- Priority Filter -->
       <div class="col-lg-2 col-md-3 col-6">
-        <select name="priority" class="form-select">
+        <select name="priority" class="form-select" onchange="this.form.submit()">
           <option value="">All Priorities</option>
           <option value="urgent" {% if current_priority == 'urgent' %}selected{% endif %}>Urgent</option>
           <option value="high" {% if current_priority == 'high' %}selected{% endif %}>High</option>
@@ -61,7 +68,7 @@
 
       <!-- Status Filter -->
       <div class="col-lg-2 col-md-3 col-6">
-        <select name="status" class="form-select">
+        <select name="status" class="form-select" onchange="this.form.submit()">
           <option value="">All Statuses</option>
           <option value="pending" {% if current_status == 'pending' %}selected{% endif %}>Pending</option>
           <option value="in_progress" {% if current_status == 'in_progress' %}selected{% endif %}>In Progress</option>
@@ -86,32 +93,32 @@
       <input type="hidden" name="date_filter" value="{{ current_date_filter }}">
       {% endif %}
 
-      <div class="col-12 d-flex justify-content-between align-items-center mt-2 pt-2 border-top">
+      <div class="col-12 d-flex flex-wrap justify-content-between align-items-center mt-2 pt-2 border-top gap-2">
         <!-- Quick filter pills -->
         <div class="d-flex flex-wrap gap-1">
-          <a href="{% url 'tasks:task_list' %}" class="btn btn-sm {% if not current_status and not current_date_filter %}btn-primary{% else %}btn-light border{% endif %}">
+          <a href="{% url 'tasks:task_list' %}" class="btn btn-sm {% if not current_status and not current_date_filter %}btn-primary{% else %}btn-outline-secondary{% endif %}">
             All ({{ stats.all }})
           </a>
-          <a href="{% url 'tasks:task_list' %}?status=pending" class="btn btn-sm {% if current_status == 'pending' %}btn-primary{% else %}btn-light border{% endif %}">
+          <a href="{% url 'tasks:task_list' %}?status=pending" class="btn btn-sm {% if current_status == 'pending' %}btn-primary{% else %}btn-outline-secondary{% endif %}">
             Pending ({{ stats.pending }})
           </a>
-          <a href="{% url 'tasks:task_list' %}?status=completed" class="btn btn-sm {% if current_status == 'completed' %}btn-primary{% else %}btn-light border{% endif %}">
+          <a href="{% url 'tasks:task_list' %}?status=completed" class="btn btn-sm {% if current_status == 'completed' %}btn-primary{% else %}btn-outline-secondary{% endif %}">
             Completed ({{ stats.completed }})
           </a>
-          <a href="{% url 'tasks:task_list' %}?date_filter=today" class="btn btn-sm {% if current_date_filter == 'today' %}btn-primary{% else %}btn-light border{% endif %}">
+          <a href="{% url 'tasks:task_list' %}?date_filter=today" class="btn btn-sm {% if current_date_filter == 'today' %}btn-primary{% else %}btn-outline-secondary{% endif %}">
             Today ({{ stats.today }})
           </a>
-          <a href="{% url 'tasks:task_list' %}?date_filter=favorite" class="btn btn-sm {% if current_date_filter == 'favorite' %}btn-primary{% else %}btn-light border{% endif %}">
+          <a href="{% url 'tasks:task_list' %}?date_filter=favorite" class="btn btn-sm {% if current_date_filter == 'favorite' %}btn-primary{% else %}btn-outline-secondary{% endif %}">
             <i class="fas fa-star text-warning me-1"></i> Favorites ({{ stats.favorites }})
           </a>
         </div>
 
         <!-- View Mode Switcher -->
         <div class="btn-group btn-group-sm">
-          <a href="?{% if query %}q={{ query }}&{% endif %}{% if current_status %}status={{ current_status }}&{% endif %}{% if current_priority %}priority={{ current_priority }}&{% endif %}{% if current_category %}category={{ current_category }}&{% endif %}{% if current_sort %}sort={{ current_sort }}&{% endif %}view=grid" class="btn {% if view_mode == 'grid' %}btn-secondary{% else %}btn-outline-secondary{% endif %}" title="Grid Cards View">
+          <a href="?{% if query %}q={{ query }}&{% endif %}{% if current_status %}status={{ current_status }}&{% endif %}{% if current_priority %}priority={{ current_priority }}&{% endif %}{% if current_category %}category={{ current_category }}&{% endif %}{% if current_sort %}sort={{ current_sort }}&{% endif %}view=grid" class="btn {% if view_mode == 'grid' %}btn-primary{% else %}btn-outline-secondary{% endif %}" title="Grid Cards View">
             <i class="fas fa-th-large"></i>
           </a>
-          <a href="?{% if query %}q={{ query }}&{% endif %}{% if current_status %}status={{ current_status }}&{% endif %}{% if current_priority %}priority={{ current_priority }}&{% endif %}{% if current_category %}category={{ current_category }}&{% endif %}{% if current_sort %}sort={{ current_sort }}&{% endif %}view=table" class="btn {% if view_mode == 'table' %}btn-secondary{% else %}btn-outline-secondary{% endif %}" title="Table View">
+          <a href="?{% if query %}q={{ query }}&{% endif %}{% if current_status %}status={{ current_status }}&{% endif %}{% if current_priority %}priority={{ current_priority }}&{% endif %}{% if current_category %}category={{ current_category }}&{% endif %}{% if current_sort %}sort={{ current_sort }}&{% endif %}view=table" class="btn {% if view_mode == 'table' %}btn-primary{% else %}btn-outline-secondary{% endif %}" title="Table View">
             <i class="fas fa-list"></i>
           </a>
         </div>
@@ -140,15 +147,15 @@
           </thead>
           <tbody>
             {% for task in tasks %}
-            <tr>
+            <tr id="task-card-{{ task.id }}" class="{% if task.status == 'completed' %}task-completed{% endif %}">
               <td>
                 <button class="btn btn-link p-0 text-decoration-none btn-toggle-fav" data-task-id="{{ task.id }}" title="Favorite">
                   <i class="{% if task.is_favorite %}fas text-warning{% else %}far text-muted{% endif %} fa-star"></i>
                 </button>
               </td>
               <td>
-                <a href="{{ task.get_absolute_url }}" class="fw-bold text-dark text-decoration-none d-block">
-                  {{ task.title }}
+                <a href="{{ task.get_absolute_url }}" class="fw-bold text-decoration-none d-block">
+                  <span class="task-title-text">{{ task.title }}</span>
                 </a>
                 <span class="text-muted small text-truncate d-inline-block" style="max-width: 250px;">
                   {{ task.description|default:"No description" }}
@@ -190,7 +197,7 @@
                     <i class="fas fa-edit"></i>
                   </a>
                   <button class="btn btn-outline-success btn-toggle-status" data-task-id="{{ task.id }}" title="Toggle Status">
-                    <i class="fas fa-check"></i>
+                    <i class="fas {% if task.status == 'completed' %}fa-undo{% else %}fa-check{% endif %}"></i>
                   </button>
                   <a href="{% url 'tasks:task_delete' task.id %}" class="btn btn-outline-danger" title="Delete">
                     <i class="fas fa-trash"></i>
@@ -208,7 +215,7 @@
     <div class="row g-4 mb-4">
       {% for task in tasks %}
       <div class="col-lg-4 col-md-6" data-aos="fade-up">
-        <div class="card card-tmr card-tmr-interactive h-100 d-flex flex-column justify-content-between border-0 shadow-sm position-relative">
+        <div id="task-card-{{ task.id }}" class="card card-tmr card-tmr-interactive h-100 d-flex flex-column justify-content-between border-0 shadow-sm position-relative {% if task.status == 'completed' %}task-completed{% endif %}">
           <div class="p-4">
             <!-- Card Header: Badges & Favorite -->
             <div class="d-flex justify-content-between align-items-center mb-3">
@@ -226,9 +233,9 @@
             </div>
 
             <!-- Title & Description -->
-            <h5 class="fw-bold text-dark mb-2">
-              <a href="{{ task.get_absolute_url }}" class="text-dark text-decoration-none">
-                {{ task.title }}
+            <h5 class="fw-bold mb-2">
+              <a href="{{ task.get_absolute_url }}" class="text-decoration-none">
+                <span class="task-title-text">{{ task.title }}</span>
               </a>
             </h5>
             {% if task.description %}
@@ -241,7 +248,7 @@
             <div class="p-2 bg-light rounded-3 mb-3 small">
               <div class="d-flex align-items-center text-truncate mb-1">
                 <i class="fas fa-map-marker-alt text-danger me-2"></i>
-                <span class="fw-semibold text-dark text-truncate">{{ task.place_name }}</span>
+                <span class="fw-semibold text-truncate">{{ task.place_name }}</span>
               </div>
               <div class="text-muted text-truncate" style="font-size: 0.78rem;">
                 {{ task.address }}
@@ -323,10 +330,10 @@
   {% else %}
     <!-- Empty State -->
     <div class="card card-tmr text-center py-5 border-0 shadow-sm">
-      <div class="stat-icon bg-light text-primary mx-auto mb-3" style="width: 72px; height: 72px; font-size: 2rem;">
+      <div class="stat-icon-wrap bg-primary-subtle text-primary mx-auto mb-3" style="width: 76px; height: 76px; font-size: 2rem;">
         <i class="fas fa-clipboard-check"></i>
       </div>
-      <h4 class="fw-bold text-dark mb-2">No Tasks Found</h4>
+      <h4 class="fw-bold mb-2">No Tasks Found</h4>
       <p class="text-muted small mb-4 mx-auto" style="max-width: 440px;">
         {% if query or current_status or current_priority or current_category %}
           No tasks match your current filter parameters. Try clearing some filters.
@@ -334,15 +341,95 @@
           You haven't created any location-based tasks yet. Add your first errand to start getting geofenced reminders!
         {% endif %}
       </p>
-      <div>
+      <div class="d-flex justify-content-center gap-2">
         {% if query or current_status or current_priority or current_category %}
-        <a href="{% url 'tasks:task_list' %}" class="btn btn-outline-secondary me-2">Clear All Filters</a>
+        <a href="{% url 'tasks:task_list' %}" class="btn btn-outline-secondary">Clear Filters</a>
         {% endif %}
-        <a href="{% url 'tasks:task_create' %}" class="btn btn-primary shadow">
-          <i class="fas fa-plus me-1"></i> Create First Task
+        <button type="button" class="btn btn-primary shadow" data-bs-toggle="modal" data-bs-target="#quickTaskModal">
+          <i class="fas fa-plus me-1"></i> Quick Add Task
+        </button>
+        <a href="{% url 'tasks:task_create' %}" class="btn btn-outline-primary">
+          <i class="fas fa-map-pin me-1"></i> Open Location Studio
         </a>
       </div>
     </div>
   {% endif %}
+</div>
+
+<!-- Quick Add Task Modal -->
+<div class="modal fade" id="quickTaskModal" tabindex="-1" aria-labelledby="quickTaskModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content border-0 shadow-lg">
+      <div class="modal-header">
+        <div class="d-flex align-items-center gap-2">
+          <div class="brand-icon" style="width: 32px; height: 32px; font-size: 0.9rem;">
+            <i class="fas fa-bolt"></i>
+          </div>
+          <div>
+            <h5 class="modal-title fw-bold mb-0" id="quickTaskModalLabel">Quick Add Location Task</h5>
+            <div class="text-muted small" style="font-size: 0.75rem;">Fast task creation with automated address geocoding</div>
+          </div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form action="{% url 'tasks:task_create' %}" method="post">
+        {% csrf_token %}
+        <div class="modal-body p-4">
+          <div class="row g-3">
+            <div class="col-12">
+              <label class="form-label">Task Title <span class="text-danger">*</span></label>
+              {{ quick_task_form.title }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Category</label>
+              {{ quick_task_form.category }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Priority</label>
+              {{ quick_task_form.priority }}
+            </div>
+            <div class="col-12">
+              <label class="form-label">Place / Venue Name <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-map-marker-alt text-danger"></i></span>
+                {{ quick_task_form.place_name }}
+              </div>
+              <div class="form-text small">e.g. DMart Mysore, Starbucks, Central Post Office</div>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Address <span class="text-danger">*</span></label>
+              {{ quick_task_form.address }}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Due Date <span class="text-danger">*</span></label>
+              {{ quick_task_form.due_date }}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Due Time</label>
+              {{ quick_task_form.due_time }}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Reminder Radius (Meters)</label>
+              <div class="input-group">
+                {{ quick_task_form.reminder_radius }}
+                <span class="input-group-text">m</span>
+              </div>
+            </div>
+            {{ quick_task_form.latitude }}
+            {{ quick_task_form.longitude }}
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+          <a href="{% url 'tasks:task_create' %}" class="btn btn-outline-primary">
+            <i class="fas fa-expand me-1"></i> Full Studio
+          </a>
+          <button type="submit" class="btn btn-primary px-4 shadow">
+            <i class="fas fa-plus me-1"></i> Create Task
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
 {% endblock %}

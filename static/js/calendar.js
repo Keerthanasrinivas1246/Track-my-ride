@@ -89,7 +89,7 @@ class TaskCalendar {
         html += `
           <td class="p-2 ${isToday ? 'bg-primary-subtle' : ''}" style="height: 105px; vertical-align: top; position: relative;">
             <div class="d-flex justify-content-between align-items-center mb-1">
-              <span class="badge rounded-pill ${isToday ? 'bg-primary text-white' : 'text-dark'}">${dayCounter}</span>
+              <span class="badge rounded-pill ${isToday ? 'bg-primary text-white shadow-sm' : 'bg-body-secondary text-body fw-semibold'}">${dayCounter}</span>
               ${matchingEvents.length > 0 ? `<span class="badge bg-secondary" style="font-size: 0.65rem;">${matchingEvents.length}</span>` : ''}
             </div>
             <div class="calendar-events-container overflow-hidden" style="max-height: 70px;">
@@ -97,8 +97,8 @@ class TaskCalendar {
 
         matchingEvents.forEach(evt => {
           html += `
-            <div class="calendar-event-pill text-truncate mb-1 p-1 rounded small cursor-pointer"
-                 style="background-color: ${evt.color}; color: #fff; font-size: 0.75rem; cursor: pointer;"
+            <div class="calendar-event-pill text-truncate mb-1 p-1 rounded small"
+                 style="background-color: ${evt.color}; color: #fff; font-size: 0.75rem; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.15);"
                  onclick="window.showEventModal(${JSON.stringify(evt).replace(/"/g, '&quot;')})">
               <i class="fas fa-map-pin me-1" style="font-size: 0.65rem;"></i>${evt.title}
             </div>

@@ -8,8 +8,11 @@
   <!-- Calendar Header -->
   <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
     <div>
-      <h2 class="fw-bold text-dark mb-1">Task Calendar Schedule</h2>
-      <p class="text-muted small mb-0">Visual monthly calendar mapped with your location-based tasks</p>
+      <div class="d-flex align-items-center gap-2 mb-1">
+        <h2 class="fw-bold mb-0">Task Calendar Schedule</h2>
+        <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3">Timeline</span>
+      </div>
+      <p class="text-muted small mb-0">Visual monthly calendar mapped with all your location-based tasks</p>
     </div>
     <div class="d-flex gap-2">
       <a href="{% url 'tasks:task_create' %}" class="btn btn-primary shadow-sm">
@@ -25,16 +28,16 @@
   <div class="card card-tmr border-0 shadow-sm p-3 mb-4">
     <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3">
       <div class="d-flex align-items-center gap-2">
-        <button id="btn-cal-prev" class="btn btn-light border btn-sm" title="Previous Month">
+        <button id="btn-cal-prev" class="btn btn-outline-secondary btn-sm" title="Previous Month">
           <i class="fas fa-chevron-left"></i>
         </button>
-        <button id="btn-cal-today" class="btn btn-light border btn-sm fw-semibold">
+        <button id="btn-cal-today" class="btn btn-outline-secondary btn-sm fw-semibold">
           Today
         </button>
-        <button id="btn-cal-next" class="btn btn-light border btn-sm" title="Next Month">
+        <button id="btn-cal-next" class="btn btn-outline-secondary btn-sm" title="Next Month">
           <i class="fas fa-chevron-right"></i>
         </button>
-        <h4 id="calendar-month-title" class="fw-bold text-dark mb-0 ms-2"></h4>
+        <h4 id="calendar-month-title" class="fw-bold mb-0 ms-2"></h4>
       </div>
 
       <!-- Priority Color Legends -->
@@ -58,21 +61,24 @@
 <div class="modal fade" id="taskPreviewModal" tabindex="-1" aria-labelledby="taskPreviewModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content border-0 shadow-lg">
-      <div class="modal-header bg-primary text-white">
-        <h5 class="modal-title fw-bold" id="taskPreviewModalLabel">
-          <i class="fas fa-calendar-check me-2"></i> Task Schedule
-        </h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      <div class="modal-header">
+        <div class="d-flex align-items-center gap-2">
+          <div class="brand-icon" style="width: 32px; height: 32px; font-size: 0.9rem;">
+            <i class="fas fa-calendar-check"></i>
+          </div>
+          <h5 class="modal-title fw-bold mb-0" id="taskPreviewModalLabel">Task Schedule</h5>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body p-4">
-        <h5 id="modal-task-title" class="fw-bold text-dark mb-2"></h5>
+        <h5 id="modal-task-title" class="fw-bold mb-2"></h5>
         <p class="text-muted small mb-3">
           <i class="fas fa-map-marker-alt text-danger me-1"></i> <span id="modal-task-place"></span>
         </p>
 
         <div class="d-flex gap-2 mb-3">
-          <span class="badge bg-light text-dark border">Priority: <strong id="modal-task-priority"></strong></span>
-          <span class="badge bg-light text-dark border">Status: <strong id="modal-task-status"></strong></span>
+          <span class="badge bg-light text-secondary border">Priority: <strong id="modal-task-priority"></strong></span>
+          <span class="badge bg-light text-secondary border">Status: <strong id="modal-task-status"></strong></span>
         </div>
 
         <div class="d-flex justify-content-end gap-2 pt-3 border-top">

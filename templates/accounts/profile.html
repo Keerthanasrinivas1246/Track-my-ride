@@ -10,16 +10,16 @@
     <div class="col-lg-4" data-aos="fade-right">
       <div class="card card-tmr border-0 shadow-sm p-4 text-center">
         <div class="position-relative d-inline-block mx-auto mb-3">
-          <img src="{{ profile.avatar_url }}" alt="{{ user.username }}" class="rounded-circle shadow" style="width: 120px; height: 120px; object-fit: cover; border: 4px solid #ffffff;">
+          <img src="{{ profile.avatar_url }}" alt="{{ user.username }}" class="rounded-circle shadow" style="width: 120px; height: 120px; object-fit: cover; border: 4px solid var(--border-card);">
         </div>
-        <h4 class="fw-bold text-dark mb-1">{{ profile.display_name }}</h4>
+        <h4 class="fw-bold mb-1">{{ profile.display_name }}</h4>
         <p class="text-muted small mb-3">@{{ user.username }}</p>
 
         {% if profile.bio %}
-        <p class="small text-secondary mb-4 italic">"{{ profile.bio }}"</p>
+        <p class="small text-muted mb-4 fst-italic">"{{ profile.bio }}"</p>
         {% endif %}
 
-        <hr class="text-muted">
+        <hr class="border-secondary opacity-25">
 
         <!-- Stats Section -->
         <div class="row g-2 text-center my-2">
@@ -37,7 +37,7 @@
           </div>
         </div>
 
-        <hr class="text-muted">
+        <hr class="border-secondary opacity-25">
 
         <div class="d-flex flex-column gap-2 text-start small text-muted">
           <div><i class="fas fa-envelope text-primary me-2"></i> {{ user.email|default:"No email set" }}</div>
@@ -60,7 +60,7 @@
     <!-- Right Column: Profile Edit Form -->
     <div class="col-lg-8" data-aos="fade-left">
       <div class="card card-tmr border-0 shadow-sm p-4 p-md-5">
-        <h4 class="fw-bold text-dark mb-1">Edit Account Profile</h4>
+        <h4 class="fw-bold mb-1">Edit Account Profile</h4>
         <p class="text-muted small mb-4">Update your personal details, geofence radius defaults, and notification preferences</p>
 
         <form method="post" enctype="multipart/form-data" novalidate>
@@ -126,7 +126,7 @@
               <label for="{{ profile_form.preferred_radius.id_for_label }}" class="form-label">Default Geofence Radius (meters)</label>
               <div class="input-group">
                 {{ profile_form.preferred_radius }}
-                <span class="input-group-text bg-light">meters</span>
+                <span class="input-group-text">meters</span>
               </div>
               <div class="form-text small">Recommended: 300m - 1000m.</div>
               {% if profile_form.preferred_radius.errors %}

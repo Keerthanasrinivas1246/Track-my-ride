@@ -18,7 +18,7 @@
   <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
     <div>
       <div class="d-flex align-items-center gap-2 mb-1">
-        <h2 class="fw-bold text-dark mb-0">{{ task.title }}</h2>
+        <h2 class="fw-bold mb-0">{{ task.title }}</h2>
         {% if task.is_favorite %}
         <i class="fas fa-star text-warning fs-5" title="Favorite Task"></i>
         {% endif %}
@@ -34,7 +34,7 @@
         {% if task.status == 'completed' %}Reopen Task{% else %}Mark Completed{% endif %}
       </button>
       <a href="{{ task.directions_url }}" target="_blank" rel="noopener" class="btn btn-outline-primary">
-        <i class="fas fa-directions me-1"></i> Get Directions
+        <i class="fas fa-directions me-1"></i> Directions
       </a>
       <a href="{% url 'tasks:task_edit' task.id %}" class="btn btn-outline-secondary">
         <i class="fas fa-edit me-1"></i> Edit
@@ -84,9 +84,9 @@
 
       <!-- Description Card -->
       <div class="card card-tmr border-0 shadow-sm p-4 mb-4">
-        <h5 class="fw-bold text-dark mb-3"><i class="fas fa-align-left text-primary me-2"></i> Description</h5>
+        <h5 class="fw-bold mb-3"><i class="fas fa-align-left text-primary me-2"></i> Description</h5>
         {% if task.description %}
-        <p class="text-secondary mb-0" style="white-space: pre-line;">{{ task.description }}</p>
+        <p class="text-muted mb-0" style="white-space: pre-line;">{{ task.description }}</p>
         {% else %}
         <p class="text-muted italic small mb-0">No description provided for this task.</p>
         {% endif %}
@@ -94,16 +94,16 @@
 
       <!-- Schedule & Geofence Specs -->
       <div class="card card-tmr border-0 shadow-sm p-4 mb-4">
-        <h5 class="fw-bold text-dark mb-3"><i class="far fa-clock text-primary me-2"></i> Schedule &amp; Proximity Specs</h5>
+        <h5 class="fw-bold mb-3"><i class="far fa-clock text-primary me-2"></i> Schedule &amp; Proximity Specs</h5>
         <div class="d-flex flex-column gap-3">
           <div class="d-flex align-items-center justify-content-between p-2 bg-light rounded-3">
             <span class="text-muted small"><i class="far fa-calendar-alt me-2 text-primary"></i> Scheduled Due Date</span>
-            <span class="fw-semibold text-dark">{{ task.due_date|date:"l, F d, Y" }}</span>
+            <span class="fw-semibold">{{ task.due_date|date:"l, F d, Y" }}</span>
           </div>
           {% if task.due_time %}
           <div class="d-flex align-items-center justify-content-between p-2 bg-light rounded-3">
             <span class="text-muted small"><i class="far fa-clock me-2 text-primary"></i> Target Due Time</span>
-            <span class="fw-semibold text-dark">{{ task.due_time|time:"g:i A" }}</span>
+            <span class="fw-semibold">{{ task.due_time|time:"g:i A" }}</span>
           </div>
           {% endif %}
           <div class="d-flex align-items-center justify-content-between p-2 bg-light rounded-3">
@@ -120,8 +120,8 @@
       <!-- Private Notes -->
       {% if task.notes %}
       <div class="card card-tmr border-0 shadow-sm p-4">
-        <h5 class="fw-bold text-dark mb-3"><i class="far fa-sticky-note text-warning me-2"></i> Private Notes</h5>
-        <div class="p-3 bg-warning-subtle rounded-3 small text-dark" style="white-space: pre-line;">
+        <h5 class="fw-bold mb-3"><i class="far fa-sticky-note text-warning me-2"></i> Private Notes</h5>
+        <div class="p-3 bg-light rounded-3 small border" style="white-space: pre-line;">
           {{ task.notes }}
         </div>
       </div>
@@ -132,8 +132,8 @@
     <div class="col-lg-6" data-aos="fade-left">
       <div class="card card-tmr border-0 shadow-sm p-4 h-100 d-flex flex-column justify-content-between">
         <div>
-          <div class="d-flex justify-content-between align-items-center mb-3">
-            <h5 class="fw-bold text-dark mb-0">
+          <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+            <h5 class="fw-bold mb-0">
               <i class="fas fa-location-dot text-danger me-2"></i> {{ task.place_name }}
             </h5>
             <span class="badge bg-light text-secondary border">Geofence Pin</span>
@@ -197,10 +197,10 @@
       });
 
       const circle = new google.maps.Circle({
-        strokeColor: '#2563eb',
+        strokeColor: '#4f46e5',
         strokeOpacity: 0.8,
         strokeWeight: 2,
-        fillColor: '#3b82f6',
+        fillColor: '#6366f1',
         fillOpacity: 0.2,
         map: map,
         center: taskPos,
@@ -246,8 +246,8 @@
       L.marker([taskData.lat, taskData.lng]).addTo(leafletMap);
       L.circle([taskData.lat, taskData.lng], {
         radius: taskData.radius,
-        color: '#2563eb',
-        fillColor: '#3b82f6',
+        color: '#4f46e5',
+        fillColor: '#6366f1',
         fillOpacity: 0.2
       }).addTo(leafletMap);
     }

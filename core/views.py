@@ -1,9 +1,10 @@
 import json
-from datetime import date
+from datetime import date, timedelta
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count
 from tasks.models import Task, Category
+from tasks.forms import TaskForm
 from notifications.models import Reminder
 
 
@@ -25,8 +26,8 @@ def home_view(request):
 def dashboard_view(request):
     """
     User central command dashboard with real-time statistics,
-    today's tasks, upcoming tasks, category breakdown for charts,
-    and recent activity log.
+    productivity metrics, weekly charts, today's schedule,
+    category distribution, and interactive map preview.
     """
     user_tasks = Task.objects.filter(user=request.user)
     today = date.today()
@@ -37,7 +38,24 @@ def dashboard_view(request):
     in_progress_tasks = user_tasks.filter(status='in_progress').count()
     today_tasks_qs = user_tasks.filter(due_date=today)
     upcoming_tasks_qs = user_tasks.filter(due_date__gt=today).order_by('due_date')[:6]
-    urgent_tasks = user_tasks.filter(priority__in=['high', 'urgent'], status__in=['pending', 'in_progress'])[:5]
+    urgent_tasks = user_tasks.filter(
+        priority__in=['high', 'urgent'],
+        status__in=['pending', 'in_progress']
+    )[:5]
+
+    completion_rate = int((completed_tasks / total_tasks * 100)) if total_tasks > 0 else 0
+
+    # 7-Day Weekly Productivity activity
+    weekly_labels = []
+    weekly_completed = []
+    weekly_pending = []
+    for i in range(6, -1, -1):
+        day = today - timedelta(days=i)
+        weekly_labels.append(day.strftime('%a'))
+        day_comp = user_tasks.filter(due_date=day, status='completed').count()
+        day_pend = user_tasks.filter(due_date=day, status__in=['pending', 'in_progress']).count()
+        weekly_completed.append(day_comp)
+        weekly_pending.append(day_pend)
 
     # Category breakdown for Chart.js
     category_counts = (
@@ -51,7 +69,7 @@ def dashboard_view(request):
     for item in category_counts:
         chart_labels.append(item['category__name'] or 'Uncategorized')
         chart_data.append(item['total'])
-        chart_colors.append(item['category__color'] or '#94a3b8')
+        chart_colors.append(item['category__color'] or '#6366f1')
 
     # Recent reminders / activity
     recent_reminders = Reminder.objects.filter(user=request.user).select_related('task')[:6]
@@ -60,11 +78,20 @@ def dashboard_view(request):
     active_tasks = user_tasks.filter(status__in=['pending', 'in_progress'])
     dashboard_tasks_json = json.dumps([t.to_map_dict() for t in active_tasks])
 
+    # Pre-populated Quick Add Form for modal
+    initial_data = {}
+    if hasattr(request.user, 'profile') and request.user.profile.preferred_radius:
+        initial_data['reminder_radius'] = request.user.profile.preferred_radius
+    quick_task_form = TaskForm(initial=initial_data)
+
+    categories = Category.objects.all()
+
     context = {
         'total_tasks': total_tasks,
         'completed_tasks': completed_tasks,
         'pending_tasks': pending_tasks,
         'in_progress_tasks': in_progress_tasks,
+        'completion_rate': completion_rate,
         'today_tasks_count': today_tasks_qs.count(),
         'today_tasks': today_tasks_qs,
         'upcoming_tasks': upcoming_tasks_qs,
@@ -74,6 +101,12 @@ def dashboard_view(request):
         'chart_labels': json.dumps(chart_labels),
         'chart_data': json.dumps(chart_data),
         'chart_colors': json.dumps(chart_colors),
+        'weekly_labels': json.dumps(weekly_labels),
+        'weekly_completed': json.dumps(weekly_completed),
+        'weekly_pending': json.dumps(weekly_pending),
+        'quick_task_form': quick_task_form,
+        'categories': categories,
+        'current_date_formatted': today.strftime('%A, %B %d, %Y'),
     }
     return render(request, 'core/dashboard.html', context)
 

@@ -8,7 +8,10 @@
   <!-- Header Bar -->
   <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
     <div>
-      <h2 class="fw-bold text-dark mb-1">Geofence Proximity Alerts</h2>
+      <div class="d-flex align-items-center gap-2 mb-1">
+        <h2 class="fw-bold mb-0">Geofence Proximity Alerts</h2>
+        <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3">Live Log</span>
+      </div>
       <p class="text-muted small mb-0">Review location triggers and proximity arrival history</p>
     </div>
     {% if reminders %}
@@ -28,11 +31,11 @@
       <div id="reminder-item-{{ reminder.id }}" class="list-group-item p-3 p-md-4 {% if not reminder.is_read %}bg-primary-subtle bg-opacity-25{% endif %} border-bottom">
         <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-2">
           <div class="d-flex align-items-center gap-2">
-            <span class="badge {% if not reminder.is_read %}bg-danger animate__animated animate__pulse{% else %}bg-secondary{% endif %}">
+            <span class="badge {% if not reminder.is_read %}bg-danger{% else %}bg-secondary{% endif %}">
               {% if not reminder.is_read %}NEW ALERT{% else %}READ{% endif %}
             </span>
-            <h6 class="fw-bold text-dark mb-0">
-              <a href="{{ reminder.task.get_absolute_url }}" class="text-dark text-decoration-none">
+            <h6 class="fw-bold mb-0">
+              <a href="{{ reminder.task.get_absolute_url }}" class="text-decoration-none">
                 {{ reminder.task.title }}
               </a>
             </h6>
@@ -42,7 +45,7 @@
           </span>
         </div>
 
-        <p class="text-secondary small mb-2">
+        <p class="text-muted small mb-2">
           <i class="fas fa-location-arrow text-primary me-1"></i>
           Triggered when you arrived within <strong>{{ reminder.distance_at_trigger|floatformat:0 }} meters</strong> of
           <strong>{{ reminder.task.place_name }}</strong>.
@@ -72,10 +75,10 @@
   </div>
   {% else %}
   <div class="card card-tmr border-0 shadow-sm text-center py-5">
-    <div class="stat-icon bg-light text-primary mx-auto mb-3" style="width: 72px; height: 72px; font-size: 2rem;">
+    <div class="stat-icon-wrap bg-primary-subtle text-primary mx-auto mb-3" style="width: 76px; height: 76px; font-size: 2rem;">
       <i class="fas fa-bell-slash"></i>
     </div>
-    <h4 class="fw-bold text-dark mb-2">No Proximity Alerts Yet</h4>
+    <h4 class="fw-bold mb-2">No Proximity Alerts Yet</h4>
     <p class="text-muted small mb-4 mx-auto" style="max-width: 440px;">
       Whenever you physically commute into the geofence radius of one of your active tasks, your alert logs will be recorded right here.
     </p>
@@ -108,11 +111,16 @@
           const item = document.getElementById(`reminder-item-${id}`);
           if (item) {
             item.classList.remove('bg-primary-subtle', 'bg-opacity-25');
+            const badge = item.querySelector('.badge');
+            if (badge) {
+              badge.className = 'badge bg-secondary';
+              badge.textContent = 'READ';
+            }
             btn.remove();
           }
         }
       } catch (err) {
-        console.error('Error marking reminder as read:', err);
+        console.error('Error marking reminder read:', err);
       }
     });
   });

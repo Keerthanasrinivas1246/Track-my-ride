@@ -1,68 +1,87 @@
-<nav class="navbar navbar-expand-lg navbar-tmr sticky-top">
+<nav class="navbar navbar-expand-lg navbar-tmr sticky-top py-2">
   <div class="container-fluid px-lg-4">
-    <a class="navbar-brand" href="{% if user.is_authenticated %}{% url 'core:dashboard' %}{% else %}{% url 'core:home' %}{% endif %}">
+    <!-- Brand Logo -->
+    <a class="navbar-brand me-3" href="{% if user.is_authenticated %}{% url 'core:dashboard' %}{% else %}{% url 'core:home' %}{% endif %}">
       <div class="brand-icon">
         <i class="fas fa-location-arrow"></i>
       </div>
-      <span>Track My Ride</span>
+      <span class="d-flex flex-column">
+        <span class="fw-bold tracking-tight">Track My Ride</span>
+      </span>
     </a>
 
-    <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+    <!-- Mobile Action Buttons (Theme Toggle + Hamburger) -->
+    <div class="d-flex align-items-center gap-2 d-lg-none">
+      <!-- Mobile Theme Toggle -->
+      <button class="theme-toggle-btn" onclick="window.toggleTheme()" title="Toggle Theme" aria-label="Toggle Theme">
+        <i class="fas fa-moon theme-toggle-icon"></i>
+      </button>
 
-    <div class="collapse navbar-collapse" id="navbarContent">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3">
+      <!-- Offcanvas Mobile Menu Trigger -->
+      <button class="btn btn-sm btn-light border-0 shadow-none p-2 rounded-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileNavDrawer" aria-controls="mobileNavDrawer" aria-label="Toggle Navigation">
+        <i class="fas fa-bars fa-lg text-secondary"></i>
+      </button>
+    </div>
+
+    <!-- Desktop Menu -->
+    <div class="collapse navbar-collapse d-none d-lg-flex" id="navbarContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-2">
         {% if user.is_authenticated %}
         <li class="nav-item">
           <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'core:dashboard' %}">
-            <i class="fas fa-th-large me-1 text-primary"></i> Dashboard
+            <i class="fas fa-th-large me-2"></i> Dashboard
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link {% if 'tasks' in request.resolver_match.namespaces and request.resolver_match.url_name != 'calendar' %}active{% endif %}" href="{% url 'tasks:task_list' %}">
-            <i class="fas fa-tasks me-1 text-primary"></i> My Tasks
+            <i class="fas fa-tasks me-2"></i> My Tasks
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link {% if request.resolver_match.url_name == 'map_view' %}active{% endif %}" href="{% url 'maps:map_view' %}">
-            <i class="fas fa-map-marked-alt me-1 text-primary"></i> Live Map
+            <i class="fas fa-map-marked-alt me-2"></i> Live Map
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link {% if request.resolver_match.url_name == 'calendar' %}active{% endif %}" href="{% url 'tasks:calendar' %}">
-            <i class="far fa-calendar-alt me-1 text-primary"></i> Calendar
+            <i class="far fa-calendar-alt me-2"></i> Calendar
           </a>
         </li>
         {% else %}
         <li class="nav-item">
           <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'core:home' %}">
-            <i class="fas fa-home me-1"></i> Home
+            <i class="fas fa-home me-2"></i> Home
           </a>
         </li>
         {% endif %}
         <li class="nav-item">
           <a class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}" href="{% url 'core:about' %}">
-            <i class="fas fa-info-circle me-1"></i> About
+            <i class="fas fa-info-circle me-2"></i> About
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}" href="{% url 'contact:contact' %}">
-            <i class="far fa-envelope me-1"></i> Contact
+            <i class="far fa-envelope me-2"></i> Contact
           </a>
         </li>
       </ul>
 
-      <div class="d-flex align-items-center gap-2 mt-3 mt-lg-0">
+      <!-- Desktop Right Controls -->
+      <div class="d-flex align-items-center gap-2">
+        <!-- Theme Toggle Button -->
+        <button class="theme-toggle-btn me-1" onclick="window.toggleTheme()" title="Toggle Dark/Light Mode" aria-label="Toggle Theme">
+          <i class="fas fa-moon theme-toggle-icon"></i>
+        </button>
+
         {% if user.is_authenticated %}
           <!-- Geofence live status pill -->
-          <div class="geofence-status-bar d-none d-md-inline-flex" title="Real-time Geofence Tracking">
+          <div class="geofence-status-bar d-none d-xl-inline-flex" title="Real-time Geofence Tracking">
             <span class="radar-pulse"></span>
             <span id="geofence-status-text" class="text-success small fw-semibold">GPS Active</span>
           </div>
 
           <!-- Notification Bell -->
-          <a href="{% url 'notifications:notification_list' %}" class="btn btn-light position-relative rounded-circle shadow-sm" style="width: 42px; height: 42px; display: flex; align-items: center; justify-content: center;" title="Proximity Alerts">
+          <a href="{% url 'notifications:notification_list' %}" class="btn btn-light position-relative rounded-circle shadow-sm" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;" title="Proximity Alerts">
             <i class="far fa-bell text-secondary"></i>
             <span id="notification-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger {% if unread_reminders_count == 0 %}d-none{% endif %}">
               {{ unread_reminders_count }}
@@ -70,14 +89,14 @@
           </a>
 
           <!-- Quick Add Task Button -->
-          <a href="{% url 'tasks:task_create' %}" class="btn btn-primary btn-sm d-flex align-items-center gap-1">
+          <a href="{% url 'tasks:task_create' %}" class="btn btn-primary btn-sm d-flex align-items-center gap-1 shadow-sm px-3">
             <i class="fas fa-plus"></i>
-            <span class="d-none d-sm-inline">Add Task</span>
+            <span>Add Task</span>
           </a>
 
           <!-- User Menu Dropdown -->
-          <div class="dropdown">
-            <button class="btn btn-light d-flex align-items-center gap-2 border-0 shadow-sm rounded-pill px-2 py-1" type="button" id="userMenuDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+          <div class="dropdown ms-1">
+            <button class="btn btn-light d-flex align-items-center gap-2 border-0 shadow-sm rounded-pill p-1 pe-2" type="button" id="userMenuDropdown" data-bs-toggle="dropdown" aria-expanded="false">
               <img src="{{ user.profile.avatar_url }}" alt="{{ user.username }}" class="rounded-circle" style="width: 32px; height: 32px; object-fit: cover;">
               <span class="fw-semibold small d-none d-md-inline pe-1">{{ user.username }}</span>
               <i class="fas fa-chevron-down small text-muted"></i>
@@ -120,10 +139,112 @@
             </ul>
           </div>
         {% else %}
-          <a href="{% url 'accounts:login' %}" class="btn btn-outline-primary">Log In</a>
-          <a href="{% url 'accounts:register' %}" class="btn btn-primary">Sign Up</a>
+          <a href="{% url 'accounts:login' %}" class="btn btn-outline-primary btn-sm px-3">Log In</a>
+          <a href="{% url 'accounts:register' %}" class="btn btn-primary btn-sm px-3 shadow-sm">Sign Up</a>
         {% endif %}
       </div>
     </div>
   </div>
 </nav>
+
+<!-- Mobile Navigation Drawer (Offcanvas) -->
+<div class="offcanvas offcanvas-start" tabindex="-1" id="mobileNavDrawer" aria-labelledby="mobileNavDrawerLabel">
+  <div class="offcanvas-header border-bottom">
+    <div class="d-flex align-items-center gap-2">
+      <div class="brand-icon" style="width: 34px; height: 34px; font-size: 0.9rem;">
+        <i class="fas fa-location-arrow"></i>
+      </div>
+      <h5 class="offcanvas-title fw-bold" id="mobileNavDrawerLabel">Track My Ride</h5>
+    </div>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body d-flex flex-column justify-content-between p-3">
+    <div>
+      {% if user.is_authenticated %}
+      <div class="p-3 bg-card-subtle rounded-3 mb-3 border">
+        <div class="d-flex align-items-center gap-2 mb-2">
+          <img src="{{ user.profile.avatar_url }}" alt="{{ user.username }}" class="rounded-circle" style="width: 38px; height: 38px; object-fit: cover;">
+          <div>
+            <div class="fw-bold small">{{ user.profile.display_name }}</div>
+            <div class="text-muted small" style="font-size: 0.75rem;">@{{ user.username }}</div>
+          </div>
+        </div>
+        <div class="d-flex align-items-center gap-2 small text-success">
+          <span class="radar-pulse"></span>
+          <span>Geofence GPS Active</span>
+        </div>
+      </div>
+      {% endif %}
+
+      <ul class="nav nav-pills flex-column gap-1 mb-4">
+        {% if user.is_authenticated %}
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'core:dashboard' %}">
+            <i class="fas fa-th-large me-2"></i> Dashboard
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if 'tasks' in request.resolver_match.namespaces and request.resolver_match.url_name != 'calendar' %}active{% endif %}" href="{% url 'tasks:task_list' %}">
+            <i class="fas fa-tasks me-2"></i> My Tasks
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'map_view' %}active{% endif %}" href="{% url 'maps:map_view' %}">
+            <i class="fas fa-map-marked-alt me-2"></i> Live Map
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'calendar' %}active{% endif %}" href="{% url 'tasks:calendar' %}">
+            <i class="far fa-calendar-alt me-2"></i> Calendar
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'notification_list' %}active{% endif %}" href="{% url 'notifications:notification_list' %}">
+            <i class="far fa-bell me-2"></i> Geofence Alerts
+            {% if unread_reminders_count > 0 %}
+            <span class="badge bg-danger rounded-pill ms-auto">{{ unread_reminders_count }}</span>
+            {% endif %}
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}" href="{% url 'accounts:profile' %}">
+            <i class="fas fa-user-circle me-2"></i> My Profile
+          </a>
+        </li>
+        {% else %}
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'core:home' %}">
+            <i class="fas fa-home me-2"></i> Home
+          </a>
+        </li>
+        {% endif %}
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}" href="{% url 'core:about' %}">
+            <i class="fas fa-info-circle me-2"></i> About
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}" href="{% url 'contact:contact' %}">
+            <i class="far fa-envelope me-2"></i> Contact
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <div>
+      {% if user.is_authenticated %}
+      <a href="{% url 'tasks:task_create' %}" class="btn btn-primary w-100 mb-2">
+        <i class="fas fa-plus me-1"></i> New Task
+      </a>
+      <a href="{% url 'accounts:logout' %}" class="btn btn-outline-danger w-100">
+        <i class="fas fa-sign-out-alt me-1"></i> Log Out
+      </a>
+      {% else %}
+      <div class="d-grid gap-2">
+        <a href="{% url 'accounts:login' %}" class="btn btn-outline-primary">Log In</a>
+        <a href="{% url 'accounts:register' %}" class="btn btn-primary">Sign Up Free</a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>

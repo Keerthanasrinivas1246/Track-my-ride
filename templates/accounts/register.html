@@ -12,7 +12,7 @@
           <div class="brand-icon mx-auto mb-3" style="width: 48px; height: 48px; font-size: 1.3rem;">
             <i class="fas fa-user-plus"></i>
           </div>
-          <h3 class="fw-bold text-dark">Create Your Account</h3>
+          <h3 class="fw-bold mb-1">Create Your Account</h3>
           <p class="text-muted small">Start managing tasks linked to real geographic places</p>
         </div>
 
@@ -21,7 +21,7 @@
 
           {% if form.non_field_errors %}
           <div class="alert alert-danger py-2 small mb-3">
-            {{ form.non_field_errors|join:", " }}
+            <i class="fas fa-exclamation-circle me-1"></i> {{ form.non_field_errors|join:", " }}
           </div>
           {% endif %}
 
@@ -45,7 +45,7 @@
           <div class="mb-3">
             <label for="{{ form.username.id_for_label }}" class="form-label">Username</label>
             <div class="input-group">
-              <span class="input-group-text bg-light text-muted border-end-0"><i class="fas fa-at"></i></span>
+              <span class="input-group-text"><i class="fas fa-at"></i></span>
               {{ form.username }}
             </div>
             {% if form.username.errors %}
@@ -56,7 +56,7 @@
           <div class="mb-3">
             <label for="{{ form.email.id_for_label }}" class="form-label">Email Address</label>
             <div class="input-group">
-              <span class="input-group-text bg-light text-muted border-end-0"><i class="fas fa-envelope"></i></span>
+              <span class="input-group-text"><i class="fas fa-envelope"></i></span>
               {{ form.email }}
             </div>
             {% if form.email.errors %}
@@ -68,7 +68,7 @@
             <div class="col-sm-6">
               <label for="{{ form.password.id_for_label }}" class="form-label">Password</label>
               <div class="input-group">
-                <span class="input-group-text bg-light text-muted border-end-0"><i class="fas fa-lock"></i></span>
+                <span class="input-group-text"><i class="fas fa-lock"></i></span>
                 {{ form.password }}
               </div>
               {% if form.password.errors %}
@@ -78,7 +78,7 @@
             <div class="col-sm-6">
               <label for="{{ form.confirm_password.id_for_label }}" class="form-label">Confirm Password</label>
               <div class="input-group">
-                <span class="input-group-text bg-light text-muted border-end-0"><i class="fas fa-check-double"></i></span>
+                <span class="input-group-text"><i class="fas fa-check-double"></i></span>
                 {{ form.confirm_password }}
               </div>
               {% if form.confirm_password.errors %}
@@ -87,14 +87,14 @@
             </div>
           </div>
 
-          <button type="submit" class="btn btn-primary w-100 py-2 shadow">
+          <button type="submit" class="btn btn-primary w-100 py-2 shadow btn-gradient-glow">
             <i class="fas fa-user-check me-2"></i> Create Free Account
           </button>
         </form>
 
         <div class="text-center mt-4 pt-3 border-top small text-muted">
           Already have an account?
-          <a href="{% url 'accounts:login' %}" class="text-primary fw-semibold text-decoration-none">Sign in here</a>
+          <a href="{% url 'accounts:login' %}" class="text-primary fw-semibold text-decoration-none ms-1">Sign in here</a>
         </div>
       </div>
     </div>

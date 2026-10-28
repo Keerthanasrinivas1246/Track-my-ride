@@ -5,47 +5,47 @@
 
 {% block content %}
 <!-- Hero Section -->
-<section class="hero-section">
-  <div class="container">
+<section class="py-5 position-relative overflow-hidden">
+  <div class="container py-lg-4">
     <div class="row align-items-center g-5">
       <div class="col-lg-6" data-aos="fade-up">
         <div class="d-inline-flex align-items-center gap-2 px-3 py-1 mb-3 rounded-pill bg-primary-subtle text-primary border border-primary-subtle small fw-semibold">
           <span class="radar-pulse"></span>
           <span>Next-Gen Smart Geofencing</span>
         </div>
-        <h1 class="hero-title mb-4">
+        <h1 class="display-4 fw-extrabold mb-4" style="letter-spacing: -1.5px; line-height: 1.15;">
           Never Forget A Task When You Are <span class="text-gradient">Right Near It.</span>
         </h1>
-        <p class="hero-subtitle mb-4">
+        <p class="text-muted fs-5 mb-4" style="max-width: 520px;">
           Set errands, grocery runs, and appointments tied to actual geographic places.
-          As soon as your vehicle or commute brings you into range, Track My Ride alerts you instantly.
+          As soon as your commute brings you into range, Track My Ride alerts you instantly.
         </p>
         <div class="d-flex flex-wrap gap-3 mb-4">
-          <a href="{% url 'accounts:register' %}" class="btn btn-primary btn-lg px-4 shadow">
+          <a href="{% url 'accounts:register' %}" class="btn btn-primary btn-lg px-4 shadow btn-gradient-glow">
             <i class="fas fa-rocket me-2"></i> Get Started Free
           </a>
           <a href="{% url 'accounts:login' %}" class="btn btn-outline-primary btn-lg px-4">
             <i class="fas fa-sign-in-alt me-2"></i> Live Demo
           </a>
         </div>
-        <div class="d-flex align-items-center gap-4 text-muted small pt-2">
+        <div class="d-flex flex-wrap align-items-center gap-4 text-muted small pt-2">
           <div><i class="fas fa-check-circle text-success me-1"></i> Google Places Search</div>
           <div><i class="fas fa-check-circle text-success me-1"></i> Background GPS Geofencing</div>
-          <div><i class="fas fa-check-circle text-success me-1"></i> Zero Setup Fee</div>
+          <div><i class="fas fa-check-circle text-success me-1"></i> Multi-channel Chimes</div>
         </div>
       </div>
 
       <div class="col-lg-6" data-aos="fade-left" data-aos-delay="150">
-        <div class="hero-map-preview card-tmr p-2 bg-white">
+        <div class="card card-tmr p-3 shadow-lg position-relative">
           <div class="d-flex align-items-center justify-content-between p-2 border-bottom mb-2">
             <div class="d-flex align-items-center gap-2">
               <span class="badge bg-danger"><i class="fas fa-bell me-1"></i> 500m Geofence Active</span>
-              <span class="small text-muted">DMart Mysore &bull; Buy Groceries</span>
+              <span class="small fw-semibold">DMart Mysore &bull; Buy Groceries</span>
             </div>
-            <span class="badge bg-success-subtle text-success">Within Range</span>
+            <span class="badge bg-success-subtle text-success border border-success-subtle">Within Range</span>
           </div>
           <!-- Hero Interactive preview simulation -->
-          <div style="height: 340px; border-radius: 12px; position: relative; background: #e2e8f0; overflow: hidden;">
+          <div style="height: 340px; border-radius: 12px; position: relative; background: #0f172a; overflow: hidden;">
             <iframe
               title="Interactive Map Preview"
               width="100%"
@@ -58,13 +58,13 @@
               style="border: 0; filter: contrast(1.05);">
             </iframe>
             <!-- Overlay simulated notification -->
-            <div class="position-absolute bottom-0 start-0 m-3 p-3 bg-white rounded-3 shadow border d-flex align-items-center gap-3" style="max-width: 320px; z-index: 10;">
-              <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+            <div class="position-absolute bottom-0 start-0 m-3 p-3 card-tmr rounded-3 shadow border d-flex align-items-center gap-3" style="max-width: 320px; z-index: 10;">
+              <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 42px; height: 42px;">
                 <i class="fas fa-shopping-basket"></i>
               </div>
               <div>
-                <div class="fw-bold small text-dark">Buy Groceries (DMart)</div>
-                <div class="text-muted" style="font-size: 0.75rem;">You arrived within 320m &bull; 6:00 PM</div>
+                <div class="fw-bold small">Buy Groceries (DMart)</div>
+                <div class="text-muted" style="font-size: 0.75rem;">Arrived within 320m &bull; 6:00 PM</div>
               </div>
             </div>
           </div>
@@ -75,11 +75,11 @@
 </section>
 
 <!-- Features Section -->
-<section class="py-5 bg-white border-top border-bottom">
+<section class="py-5 border-top border-bottom">
   <div class="container py-4">
     <div class="text-center mb-5" data-aos="fade-up">
       <span class="badge bg-primary-subtle text-primary mb-2 px-3 py-1 rounded-pill">Cutting-Edge Features</span>
-      <h2 class="fw-bold text-dark">Built For Daily Commuters &amp; Achievers</h2>
+      <h2 class="fw-bold">Built For Daily Commuters &amp; Achievers</h2>
       <p class="text-muted mx-auto" style="max-width: 620px;">
         Track My Ride bridges calendar productivity with real-world geographic coordinates so you never drive past an errand again.
       </p>
@@ -89,7 +89,7 @@
       <!-- Feature 1 -->
       <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
         <div class="card card-tmr card-tmr-interactive h-100 p-4 border-0">
-          <div class="stat-icon bg-primary-subtle text-primary mb-3">
+          <div class="stat-icon-wrap bg-primary-subtle text-primary mb-3">
             <i class="fas fa-map-pin"></i>
           </div>
           <h5 class="fw-bold mb-2">Location-Aware Tasks</h5>
@@ -102,7 +102,7 @@
       <!-- Feature 2 -->
       <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
         <div class="card card-tmr card-tmr-interactive h-100 p-4 border-0">
-          <div class="stat-icon bg-danger-subtle text-danger mb-3">
+          <div class="stat-icon-wrap bg-danger-subtle text-danger mb-3">
             <i class="fas fa-bullseye"></i>
           </div>
           <h5 class="fw-bold mb-2">Adjustable Geofence Radius</h5>
@@ -115,7 +115,7 @@
       <!-- Feature 3 -->
       <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
         <div class="card card-tmr card-tmr-interactive h-100 p-4 border-0">
-          <div class="stat-icon bg-success-subtle text-success mb-3">
+          <div class="stat-icon-wrap bg-success-subtle text-success mb-3">
             <i class="fas fa-bell"></i>
           </div>
           <h5 class="fw-bold mb-2">Multi-Channel Proximity Alerts</h5>
@@ -128,7 +128,7 @@
       <!-- Feature 4 -->
       <div class="col-md-4" data-aos="fade-up" data-aos-delay="150">
         <div class="card card-tmr card-tmr-interactive h-100 p-4 border-0">
-          <div class="stat-icon bg-warning-subtle text-warning mb-3">
+          <div class="stat-icon-wrap bg-warning-subtle text-warning mb-3">
             <i class="fas fa-compass"></i>
           </div>
           <h5 class="fw-bold mb-2">Realtime Nearby Tasks</h5>
@@ -141,7 +141,7 @@
       <!-- Feature 5 -->
       <div class="col-md-4" data-aos="fade-up" data-aos-delay="250">
         <div class="card card-tmr card-tmr-interactive h-100 p-4 border-0">
-          <div class="stat-icon bg-info-subtle text-info mb-3">
+          <div class="stat-icon-wrap bg-info-subtle text-info mb-3">
             <i class="far fa-calendar-alt"></i>
           </div>
           <h5 class="fw-bold mb-2">Interactive Calendar &amp; Map</h5>
@@ -154,7 +154,7 @@
       <!-- Feature 6 -->
       <div class="col-md-4" data-aos="fade-up" data-aos-delay="350">
         <div class="card card-tmr card-tmr-interactive h-100 p-4 border-0">
-          <div class="stat-icon bg-secondary text-white mb-3">
+          <div class="stat-icon-wrap bg-secondary-subtle text-secondary mb-3">
             <i class="fas fa-shield-alt"></i>
           </div>
           <h5 class="fw-bold mb-2">Secure &amp; Isolated Data</h5>
@@ -171,13 +171,13 @@
 <section class="py-5">
   <div class="container py-4">
     <div class="text-center mb-5" data-aos="fade-up">
-      <h2 class="fw-bold text-dark">How Track My Ride Works</h2>
+      <h2 class="fw-bold">How Track My Ride Works</h2>
       <p class="text-muted">A seamless 3-step loop to never miss a location-critical task.</p>
     </div>
 
     <div class="row g-4 text-center">
       <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
-        <div class="p-4 bg-white rounded-4 shadow-sm border h-100">
+        <div class="card card-tmr p-4 h-100 border-0 shadow-sm">
           <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center fw-bold fs-4 mb-3" style="width: 56px; height: 56px;">
             1
           </div>
@@ -189,7 +189,7 @@
       </div>
 
       <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
-        <div class="p-4 bg-white rounded-4 shadow-sm border h-100">
+        <div class="card card-tmr p-4 h-100 border-0 shadow-sm">
           <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center fw-bold fs-4 mb-3" style="width: 56px; height: 56px;">
             2
           </div>
@@ -201,7 +201,7 @@
       </div>
 
       <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
-        <div class="p-4 bg-white rounded-4 shadow-sm border h-100">
+        <div class="card card-tmr p-4 h-100 border-0 shadow-sm">
           <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center fw-bold fs-4 mb-3" style="width: 56px; height: 56px;">
             3
           </div>
@@ -216,23 +216,23 @@
 </section>
 
 <!-- Stats Counter Section -->
-<section class="py-5 bg-primary text-white">
+<section class="py-5" style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); color: #ffffff;">
   <div class="container py-3">
     <div class="row g-4 text-center">
       <div class="col-md-3 col-6" data-aos="zoom-in" data-aos-delay="100">
-        <div class="display-5 fw-extrabold mb-1">99.8%</div>
+        <div class="display-5 fw-bold mb-1">99.8%</div>
         <div class="text-white-50 small">Geofence Trigger Accuracy</div>
       </div>
       <div class="col-md-3 col-6" data-aos="zoom-in" data-aos-delay="200">
-        <div class="display-5 fw-extrabold mb-1">500m</div>
+        <div class="display-5 fw-bold mb-1">500m</div>
         <div class="text-white-50 small">Default Proximity Radius</div>
       </div>
       <div class="col-md-3 col-6" data-aos="zoom-in" data-aos-delay="300">
-        <div class="display-5 fw-extrabold mb-1">&lt;15s</div>
+        <div class="display-5 fw-bold mb-1">&lt;15s</div>
         <div class="text-white-50 small">Proximity Refresh Cycle</div>
       </div>
       <div class="col-md-3 col-6" data-aos="zoom-in" data-aos-delay="400">
-        <div class="display-5 fw-extrabold mb-1">100%</div>
+        <div class="display-5 fw-bold mb-1">100%</div>
         <div class="text-white-50 small">Free &amp; Open Source</div>
       </div>
     </div>
@@ -240,16 +240,16 @@
 </section>
 
 <!-- Testimonials Section -->
-<section class="py-5 bg-white">
+<section class="py-5">
   <div class="container py-4">
     <div class="text-center mb-5" data-aos="fade-up">
       <span class="badge bg-primary-subtle text-primary mb-2 px-3 py-1 rounded-pill">What Users Say</span>
-      <h2 class="fw-bold text-dark">Loved by Busy Professionals</h2>
+      <h2 class="fw-bold">Loved by Busy Professionals</h2>
     </div>
 
     <div class="row g-4">
       <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
-        <div class="card-tmr p-4 h-100 d-flex flex-column justify-content-between">
+        <div class="card card-tmr p-4 h-100 d-flex flex-column justify-content-between">
           <div class="mb-3">
             <div class="text-warning mb-2">
               <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
@@ -259,9 +259,9 @@
             </p>
           </div>
           <div class="d-flex align-items-center gap-3">
-            <img src="https://ui-avatars.com/api/?name=Arjun+Rao&background=2563eb&color=fff" class="rounded-circle" width="40" height="40" alt="Arjun">
+            <img src="https://ui-avatars.com/api/?name=Arjun+Rao&background=4f46e5&color=fff" class="rounded-circle" width="40" height="40" alt="Arjun">
             <div>
-              <div class="fw-bold small text-dark">Arjun Rao</div>
+              <div class="fw-bold small">Arjun Rao</div>
               <div class="text-muted" style="font-size: 0.75rem;">Product Architect, Bangalore</div>
             </div>
           </div>
@@ -269,7 +269,7 @@
       </div>
 
       <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
-        <div class="card-tmr p-4 h-100 d-flex flex-column justify-content-between">
+        <div class="card card-tmr p-4 h-100 d-flex flex-column justify-content-between">
           <div class="mb-3">
             <div class="text-warning mb-2">
               <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
@@ -281,7 +281,7 @@
           <div class="d-flex align-items-center gap-3">
             <img src="https://ui-avatars.com/api/?name=Sneha+Patil&background=10b981&color=fff" class="rounded-circle" width="40" height="40" alt="Sneha">
             <div>
-              <div class="fw-bold small text-dark">Sneha Patil</div>
+              <div class="fw-bold small">Sneha Patil</div>
               <div class="text-muted" style="font-size: 0.75rem;">Medical Representative, Mysore</div>
             </div>
           </div>
@@ -289,7 +289,7 @@
       </div>
 
       <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
-        <div class="card-tmr p-4 h-100 d-flex flex-column justify-content-between">
+        <div class="card card-tmr p-4 h-100 d-flex flex-column justify-content-between">
           <div class="mb-3">
             <div class="text-warning mb-2">
               <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
@@ -301,7 +301,7 @@
           <div class="d-flex align-items-center gap-3">
             <img src="https://ui-avatars.com/api/?name=Vikram+Singh&background=8b5cf6&color=fff" class="rounded-circle" width="40" height="40" alt="Vikram">
             <div>
-              <div class="fw-bold small text-dark">Vikram Singh</div>
+              <div class="fw-bold small">Vikram Singh</div>
               <div class="text-muted" style="font-size: 0.75rem;">Sales Consultant, Pune</div>
             </div>
           </div>
@@ -312,16 +312,16 @@
 </section>
 
 <!-- Call to Action Banner -->
-<section class="py-5 bg-light">
+<section class="py-5">
   <div class="container text-center py-4" data-aos="zoom-in">
-    <div class="card card-tmr p-5 border-0 bg-white shadow-lg mx-auto" style="max-width: 800px;">
-      <h2 class="fw-bold text-dark mb-3">Ready to Make Your Tasks Location-Smart?</h2>
+    <div class="card card-tmr p-5 border-0 shadow-lg mx-auto" style="max-width: 800px;">
+      <h2 class="fw-bold mb-3">Ready to Make Your Tasks Location-Smart?</h2>
       <p class="text-muted mb-4 mx-auto" style="max-width: 540px;">
         Join today. Create tasks, set geofence reminders, and conquer your to-do list with zero forgotten errands.
       </p>
       <div>
-        <a href="{% url 'accounts:register' %}" class="btn btn-primary btn-lg px-5 shadow">
-          Create Free Account Now
+        <a href="{% url 'accounts:register' %}" class="btn btn-primary btn-lg px-5 shadow btn-gradient-glow">
+          <i class="fas fa-user-plus me-2"></i> Create Free Account Now
         </a>
       </div>
     </div>

@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,10 +10,21 @@
   <meta name="description" content="Track My Ride: Smart location-based task manager that reminds you of errands and to-dos whenever you reach near their locations.">
   <meta name="user-authenticated" content="{% if user.is_authenticated %}true{% else %}false{% endif %}">
 
-  <!-- Google Font: Inter -->
+  <!-- Immediate Theme Pre-loader (Prevents flash of unstyled theme) -->
+  <script>
+    (function() {
+      const saved = localStorage.getItem('tmr-theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const theme = saved ? saved : (prefersDark ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-bs-theme', theme);
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+
+  <!-- Google Fonts: Plus Jakarta Sans & Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <!-- Font Awesome 6 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -24,7 +35,7 @@
   <!-- AOS Animation Library -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" integrity="sha512-1cK78a1o+ht2JcaW6g8OXYwqpev9+6GqOkz9xmBN9iUUhIndKtxwILGWYOSibOKjLsEdjyjZvYDq/cZwNeak0w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-  <!-- Leaflet CSS (Reliable interactive fallback & complement) -->
+  <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 
   <!-- Custom Design System -->
@@ -40,24 +51,16 @@
   <!-- Global Flash Messages -->
   {% include 'includes/messages.html' %}
 
-  <!-- Global Google Maps Auth Diagnostic Alert (Hidden by default, shown on auth failure) -->
+  <!-- Global Google Maps Auth Notice (Only shown if key has restrictions/errors) -->
   <div id="google-maps-auth-alert" class="container mt-3 d-none">
     <div class="alert alert-warning border-0 shadow-sm d-flex align-items-start gap-3" role="alert">
       <i class="fas fa-exclamation-triangle fa-2x text-warning mt-1"></i>
       <div class="flex-grow-1">
-        <h6 class="alert-heading fw-bold mb-1">Google Maps API Configuration Notice</h6>
+        <h6 class="alert-heading fw-bold mb-1">Google Maps API Notice</h6>
         <p class="small mb-2 text-dark">
           Google Maps reported an authorization or billing error (<code>gm_authFailure</code>).
-          The interactive map fallback has been activated so you can continue using the application.
+          The interactive map fallback is active so you can continue exploring smoothly.
         </p>
-        <div class="small text-secondary mb-0">
-          <strong>To enable Google Maps with your API key:</strong>
-          <ol class="mb-1 ps-3">
-            <li>Ensure billing is enabled on your <a href="https://console.cloud.google.com/billing" target="_blank" class="fw-semibold">Google Cloud project</a>.</li>
-            <li>In <a href="https://console.cloud.google.com/apis/dashboard" target="_blank" class="fw-semibold">APIs &amp; Services</a>, enable: <strong>Maps JavaScript API</strong>, <strong>Places API</strong>, and <strong>Geocoding API</strong>.</li>
-            <li>If your key has HTTP referrer restrictions, add: <code>http://localhost:8000/*</code>, <code>http://127.0.0.1:8000/*</code>.</li>
-          </ol>
-        </div>
       </div>
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
@@ -80,10 +83,10 @@
   <!-- AOS Library JS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js" integrity="sha512-A7AYk1fGKX6S2SsHywmPkrnzTZHrgiVT7GcQkLGDe2ev0aWb8zejytzS8wjo7PGEXKqJOrjQ4oORtnimIRZBtw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-  <!-- Chart.js (for Dashboards & Visualizations) -->
+  <!-- Chart.js (Visualizations) -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
 
-  <!-- Leaflet JS (Interactive fallback) -->
+  <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
   <!-- Google Maps JavaScript API Loading & Asynchronous Orchestration -->
@@ -99,7 +102,7 @@
     };
 
     window.gm_authFailure = function() {
-      console.warn("Google Maps API authentication failed (gm_authFailure). Check API key restrictions, billing, and enabled APIs in Google Cloud Console.");
+      console.warn("Google Maps API authentication notice (gm_authFailure). Using interactive map layer.");
       window.googleMapsAuthFailed = true;
       const alertBox = document.getElementById('google-maps-auth-alert');
       if (alertBox) {
